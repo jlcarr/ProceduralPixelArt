@@ -12,6 +12,7 @@ def create_cube(x):
 	img_w = 4 * x + 5
 	image_obj = Image.new('RGBA',(img_w,img_h),color=(0,0,0,0))
 	draw_obj = ImageDraw.Draw(image_obj)
+	
 	draw_obj.line([(0, x+1), (2*x+2, 0), (4*x+4, x+1), (2*x+1, 2*x+2), (0, x+1)], fill=(0,0,0,255))
 	draw_obj.line([(0, x+1), (0, 3*x+3), (2*x+2, 4*x+4), (4*x+4, 3*x+3), (4*x+4, x+1)], fill=(0,0,0,255))
 	draw_obj.line([(2*x+2, 2*x+2), (2*x+2, 4*x+4)], fill=(0,0,0,255))
@@ -19,6 +20,23 @@ def create_cube(x):
 	ImageDraw.floodfill(image_obj,(2*x+2, x+1),(255,255,255,255)) #top
 	ImageDraw.floodfill(image_obj,(x+1, 2*x+2),(255,255,255,255)) # left
 	ImageDraw.floodfill(image_obj,(3*x+3, 2*x+2),(255,255,255,255)) # right
+	return image_obj
+
+
+
+
+def create_cylinder(x):
+	img_h = 4 * x + 5
+	img_w = 4 * x + 5
+	image_obj = Image.new('RGBA',(img_w,img_h),color=(0,0,0,0))
+	draw_obj = ImageDraw.Draw(image_obj)
+	
+	x_orig = int((x+1) / np.sqrt(2))
+	draw_obj.arc([(2*x+2 - 2*x_orig, x+1 - x_orig), (2*x+2 + 2*x_orig, x+1 + x_orig)], 0, 360, fill=(0,0,0,255))
+	draw_obj.arc([(2*x+2 - 2*x_orig, 3*x+3 - x_orig), (2*x+2 + 2*x_orig, 3*x+3 + x_orig)], 0, 180, fill=(0,0,0,255))
+	draw_obj.line([(2*x+2 - 2*x_orig, x+1), (2*x+2 - 2*x_orig, 3*x+3)], fill=(0,0,0,255))
+	draw_obj.line([(2*x+2 + 2*x_orig, x+1), (2*x+2 + 2*x_orig, 3*x+3)], fill=(0,0,0,255))
+	del draw_obj
 	return image_obj
 
 
@@ -68,9 +86,10 @@ def tile3D(map, tiles, x):
 
 if __name__ == "__main__":
 	# Demonstration
-	x = 8
+	x = 16
 	# Base unit
 	create_cube(x).save("test_cube.png")
+	create_cylinder(x).save("test_cylinder.png")
 
 	# Hello world
 	tiles = [None, create_cube(x)]

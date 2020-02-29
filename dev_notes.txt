@@ -1,0 +1,26 @@
+
+
+Adjacent cube masking
+udfblr = [0,0,0,0,0,0]
+
+segments =
+tl, tr
+ml, mr
+bl, br
+sl, sr
+c
+
+u -> ml + mr + (tl + tr)
+d -> bl + br
+f -> tr + sr
+b -> ml + c + (sl + bl)
+l -> tl + sl
+r -> mr + c + (sr + br)
+
+in theory 2^6 = 32 possible cubes? How many are distinct and meaningful?
+
+blockers
+b + r -> d (2^1 - 1 = 1)
+b + u -> l (2^1 - 1 = 1)
+r + u -> f (2^1 - 1 = 1)
+b + r + u -> everything (2^3 - 1 = 7)
