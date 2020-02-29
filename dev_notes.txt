@@ -24,3 +24,12 @@ b + r -> d (2^1 - 1 = 1)
 b + u -> l (2^1 - 1 = 1)
 r + u -> f (2^1 - 1 = 1)
 b + r + u -> everything (2^3 - 1 = 7)
+
+
+
+Elliptic arc drawing
+Python PIL doesn't seem to use
+https://en.wikipedia.org/wiki/Midpoint_circle_algorithm
+Would be prettier if it did
+
+
