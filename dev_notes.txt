@@ -33,3 +33,65 @@ https://en.wikipedia.org/wiki/Midpoint_circle_algorithm
 Would be prettier if it did
 
 
+
+To mix sizes:
+3x+2 for new x
+to replace
+[
+	[
+		[1, 1, 1],
+		[1, 1, 1],
+		[1, 1, 1]
+	],
+	[
+		[1, 1, 1],
+		[1, 1, 1],
+		[1, 1, 1]
+	],
+	[
+		[1, 1, 1],
+		[1, 1, 1],
+		[1, 1, 1]
+	]
+]
+with
+[
+	[
+		[0, 0, 0],
+		[0, 0, 0],
+		[0, 0, 0]
+	],
+	[
+		[0, 0, 0],
+		[0, 0, 0],
+		[0, 0, 0]
+	],
+	[
+		[0, 0, 0],
+		[0, 0, 0],
+		[0, 0, 0]
+	],
+	[
+		[0, 0, 0],
+		[0, 0, 0],
+		[1, 0, 0]
+	]
+]
+
+
+
+
+x' = x*cos(t) - y*sin(t)
+y' = x*cos(t) + y*sin(t)
+
+
+
+ellipse in polar:
+r = a*b/sqrt((a*sin(t))^2 + (b*cos(t))^2)
+
+
+
+(x/a)^2 + (y/b)^2 = 1
+ b^2 *(x*cos(t) - y*sin(t))^2 +  a^2 *(x*cos(t) + y*sin(t)) = a^2 * b^2
+
+-a^2*b^2 + a^2*x^2*cos(t)^2 + a^2*x*y*sin(2*t) + a^2*y^2*sin(t)^2 + b^2*x^2*cos(t)^2 - b^2*x*y*sin(2*t) + b^2*y^2*sin(t)^2 = 0
