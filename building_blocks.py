@@ -314,13 +314,20 @@ def create_staircase(x, l):
 	image_obj = Image.new('RGBA', (img_w,img_h), color=(0,0,0,0))
 	draw_obj = ImageDraw.Draw(image_obj)
 	
-	draw_obj.line([(0, x+1), (2*x+2, 0), (4*x+4, x+1), (2*x+1, 2*x+2), (0, x+1)], fill=(0,0,0,255))
-	draw_obj.line([(0, x+1), (0, 3*x+3), (2*x+2, 4*x+4), (4*x+4, 3*x+3), (4*x+4, x+1)], fill=(0,0,0,255))
-	draw_obj.line([(2*x+2, 2*x+2), (2*x+2, 4*x+4)], fill=(0,0,0,255))
+	#draw_obj.line([(0, x+1), (2*x+2, 0), (4*x+4, x+1), (2*x+1, 2*x+2), (0, x+1)], fill=(0,0,0,255))
+	#draw_obj.line([(0, x+1), (0, 3*x+3), (2*x+2, 4*x+4), (4*x+4, 3*x+3), (4*x+4, x+1)], fill=(0,0,0,255))
+	#draw_obj.line([(2*x+2, 2*x+2), (2*x+2, 4*x+4)], fill=(0,0,0,255))
+	
+	draw_obj.line([(0, 3*x+3), (2*x+2, 4*x+4), (4*x+4, 3*x+3), (4*x+4, x+1), (2*x+2, 0)], fill=(0,0,0,255))
 	for i in range(x/l):
 		draw_obj.line([(2*x+2 + 2*l*i, 4*x+4 - 3*l*(i+1)), (2*x+2 + 2*l*i+2*l, 4*x+4 - 3*l*(i+1)-l)], fill=(0,0,0,255))
 		draw_obj.line([(2*x+2 + 2*l*i, 4*x+4 - 3*l*i-l), (2*x+2 + 2*l*i, 4*x+4 - 3*l*(i+1))], fill=(0,0,0,255))
-
+	for i in range(x/l):
+		draw_obj.line([(2*l*i, 3*x+3 - 3*l*(i+1)), (2*l*i+2*l, 3*x+3 - 3*l*(i+1)-l)], fill=(0,0,0,255))
+		draw_obj.line([(2*l*i, 3*x+3 - 3*l*i-l), (2*l*i, 3*x+3 - 3*l*(i+1))], fill=(0,0,0,255))
+	for i in range(x/l):
+		draw_obj.line([(2*x+2 + 2*l*i, 4*x+4 - 3*l*(i+1)), (2*l*i, 3*x+3 - 3*l*(i+1))], fill=(0,0,0,255))
+		draw_obj.line([(2*x+2 + 2*l*i, 4*x+4 - 3*l*i-l), (2*l*i, 3*x+3 - 3*l*i-l)], fill=(0,0,0,255))
 	del draw_obj
 	
 	
@@ -466,7 +473,7 @@ def tile3D(map, tiles, x):
 import sys
 if __name__ == "__main__":
 	#create_fillet(32).save("test_fillet.png")
-	create_staircase(32, 2).save("test_staircase.png")
+	create_staircase(64, 6).save("test_staircase.png")
 	sys.exit()
 	# Demonstration
 	x = 100 #47
