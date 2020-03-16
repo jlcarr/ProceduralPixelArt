@@ -3,13 +3,14 @@ import numpy as np
 
 
 
-def bresenham_ellipse(image_obj, mid_xy, ab, theta, angle_max = 2*np.pi, angle_min = 0):
+def bresenham_ellipse(image_obj, mid_xy, ab, theta, angle_max = 2*np.pi, angle_min = 0, ABCD=None):
 	mid_x, mid_y = mid_xy
 	a,b = ab
-	theta = -theta
+	a,b = float(a),float(b)
+	theta = -float(theta)
 	aSq = a*a
 	# focal point
-	c = np.sqrt(aSq - b*b)
+	c = np.sqrt(a*a - b*b)
 	# rotated focal point
 	Xf = c*np.cos(theta)
 	Yf = c*np.sin(theta)
@@ -21,6 +22,11 @@ def bresenham_ellipse(image_obj, mid_xy, ab, theta, angle_max = 2*np.pi, angle_m
 	B = -2 * Xf * Yf
 	C = aSq - YfSq
 	D = aSq * (YfSq - A)
+	
+	if ABCD:
+		A,B,C,D = ABCD
+		A,B,C,D = float(A),float(B),float(C),float(D)
+	print(A,B,C,D)
 	
 	# boudary between region 8 and 1
 	k1 = -B/(2*C)
@@ -52,6 +58,9 @@ def bresenham_ellipse(image_obj, mid_xy, ab, theta, angle_max = 2*np.pi, angle_m
 	XH = int(round(Xh))
 	XL = int(round(Xl))
 
+	#print("XV,YV,YR,XH,XL",XV,YV,YR,XH,XL)
+	#print("(Xv,Yv),(Xr,Yr),(Xh,Yh),(Xl,Yl)",(int(Xv),int(Yv)),(int(Xr),int(Yr)),(int(Xh),int(Yh)),(int(Xl),int(Yl)))
+	#print("(Xv,Yv),(Xr,Yr),(Xh,Yh),(Xl,Yl)",(Xv,Yv),(Xr,Yr),(Xh,Yh),(Xl,Yl))
 	# Starting pixel
 	x = XV
 	y = YV
@@ -87,16 +96,23 @@ def bresenham_ellipse(image_obj, mid_xy, ab, theta, angle_max = 2*np.pi, angle_m
 
 	# region 1
 	while y < YR:
+		#print("reg1: x,y",x,y)
 		current_angle = np.arctan2(y, x) - theta
 		current_angle = current_angle if current_angle >= 0 else current_angle + 2 * np.pi
 		current_angle = 2 * np.pi - current_angle
 		if (current_angle >= angle_min) and (current_angle <= angle_max):
-			image_obj.putpixel((x + mid_x, y + mid_y), (0,0,0,255))
+			try:
+				image_obj.putpixel((x + mid_x, y + mid_y), (0,0,0,255))
+			except:
+				pass
 		current_angle = np.arctan2(-y, -x) - theta
 		current_angle = current_angle if current_angle >= 0 else current_angle + 2 * np.pi
 		current_angle = 2 * np.pi - current_angle
 		if (current_angle >= angle_min) and (current_angle <= angle_max):
-			image_obj.putpixel((-x + mid_x, -y + mid_y), (0,0,0,255))
+			try:
+				image_obj.putpixel((-x + mid_x, -y + mid_y), (0,0,0,255))
+			except:
+				pass
 		y += 1
 		if (d1  < 0 ) or (Fn - Fnw < cross1):
 			d1 += Fn
@@ -107,22 +123,30 @@ def bresenham_ellipse(image_obj, mid_xy, ab, theta, angle_max = 2*np.pi, angle_m
 			d1 += Fnw
 			Fn += Fn_nw
 			Fnw += Fnw_nw
+	#return image_obj
 
 	# region 2
 	Fw = Fnw - Fn + A + B + B/2
 	Fnw = Fnw + A - C
 	d2 = d1 + (Fw - Fn + C)/2 + (A + C)/4 - A
 	while x > XH:
+		#print("reg2: x,y",x,y)
 		current_angle = np.arctan2(y, x) - theta
 		current_angle = current_angle if current_angle >= 0 else current_angle + 2 * np.pi
 		current_angle = 2 * np.pi - current_angle
 		if (current_angle >= angle_min) and (current_angle <= angle_max):
-			image_obj.putpixel((x + mid_x, y + mid_y), (0,0,0,255))
+			try:
+				image_obj.putpixel((x + mid_x, y + mid_y), (0,0,0,255))
+			except:
+				pass
 		current_angle = np.arctan2(-y, -x) - theta
 		current_angle = current_angle if current_angle >= 0 else current_angle + 2 * np.pi
 		current_angle = 2 * np.pi - current_angle
 		if (current_angle >= angle_min) and (current_angle <= angle_max):
-			image_obj.putpixel((-x + mid_x, -y + mid_y), (0,0,0,255))
+			try:
+				image_obj.putpixel((-x + mid_x, -y + mid_y), (0,0,0,255))
+			except:
+				pass
 		x -= 1
 		if (d2  < 0 ) or (Fnw - Fw < cross2):
 			y += 1
@@ -139,16 +163,23 @@ def bresenham_ellipse(image_obj, mid_xy, ab, theta, angle_max = 2*np.pi, angle_m
 	Fw = Fw + B
 	Fsw = Fw - Fnw + Fw + 2*C + 2*C - B
 	while x > XL:
+		#print("reg3: x,y",x,y)
 		current_angle = np.arctan2(y, x) - theta
 		current_angle = current_angle if current_angle >= 0 else current_angle + 2 * np.pi
 		current_angle = 2 * np.pi - current_angle
 		if (current_angle >= angle_min) and (current_angle <= angle_max):
-			image_obj.putpixel((x + mid_x, y + mid_y), (0,0,0,255))
+			try:
+				image_obj.putpixel((x + mid_x, y + mid_y), (0,0,0,255))
+			except:
+				pass
 		current_angle = np.arctan2(-y, -x) - theta
 		current_angle = current_angle if current_angle >= 0 else current_angle + 2 * np.pi
 		current_angle = 2 * np.pi - current_angle
 		if (current_angle >= angle_min) and (current_angle <= angle_max):
-			image_obj.putpixel((-x + mid_x, -y + mid_y), (0,0,0,255))
+			try:
+				image_obj.putpixel((-x + mid_x, -y + mid_y), (0,0,0,255))
+			except:
+				pass
 		x -= 1
 		if (d3  < 0 ) or (Fsw - Fw > cross3):
 			d3 += Fw
@@ -167,16 +198,23 @@ def bresenham_ellipse(image_obj, mid_xy, ab, theta, angle_max = 2*np.pi, angle_m
 	Fs = Fs + C - B/2
 	YV = - YV
 	while y > YV:
+		#print("reg4: x,y",x,y)
 		current_angle = np.arctan2(y, x) - theta
 		current_angle = current_angle if current_angle >= 0 else current_angle + 2 * np.pi
 		current_angle = 2 * np.pi - current_angle
 		if (current_angle >= angle_min) and (current_angle <= angle_max):
-			image_obj.putpixel((x + mid_x, y + mid_y), (0,0,0,255))
+			try:
+				image_obj.putpixel((x + mid_x, y + mid_y), (0,0,0,255))
+			except:
+				pass
 		current_angle = np.arctan2(-y, -x) - theta
 		current_angle = current_angle if current_angle >= 0 else current_angle + 2 * np.pi
 		current_angle = 2 * np.pi - current_angle
 		if (current_angle >= angle_min) and (current_angle <= angle_max):
-			image_obj.putpixel((-x + mid_x, -y + mid_y), (0,0,0,255))
+			try:
+				image_obj.putpixel((-x + mid_x, -y + mid_y), (0,0,0,255))
+			except:
+				pass
 		y -= 1
 		if (d4  < 0 ) or (Fsw - Fs < cross4):
 			x -= 1
@@ -187,8 +225,11 @@ def bresenham_ellipse(image_obj, mid_xy, ab, theta, angle_max = 2*np.pi, angle_m
 			d4 += Fs
 			Fs += Fs_s
 			Fsw += Fsw_s
-	image_obj.putpixel((x + mid_x, y + mid_y), (0,0,0,255))
-	image_obj.putpixel((-x + mid_x, -y + mid_y), (0,0,0,255))
+	try:
+		image_obj.putpixel((x + mid_x, y + mid_y), (0,0,0,255))
+		image_obj.putpixel((-x + mid_x, -y + mid_y), (0,0,0,255))
+	except:
+		pass
 	return image_obj
 
 
@@ -234,12 +275,13 @@ def create_fillet(x):
 	draw_obj.line([(0, x+1), (0, 3*x+3), (2*x+2, 4*x+4), (4*x+4, 3*x+3), (4*x+4, x+1)], fill=(0,0,0,255))
 	draw_obj.line([(2*x+2, 2*x+2), (2*x+2, 4*x+4)], fill=(0,0,0,255))
 	
-	bresenham_ellipse(image_obj, (2*x+2, x+1), (2*x_orig+2, x_orig), 0, angle_min = np.pi) # -45*3.14159/180.0
-	bresenham_ellipse(image_obj, (x+1, (5*x+5)/2), (2*x_orig+2, x_orig), -np.arctan(3.0/2.0)+0.05)
-	bresenham_ellipse(image_obj, (3*x+3, (5*x+5)/2), (2*x_orig+2, x_orig), np.arctan(3.0/2.0)-0.05)
-
+	draw_obj.line([(2*x+2, 4*x+4), (2*x+2 + 4*x*np.cos(np.arctan((3.0*x+2)/(2*x+2))), 4*x+4 - 4*x*np.sin(np.arctan((3.0*x+2)/(2*x+2))))], fill=(0,0,0,255))
 	del draw_obj
 	
+	bresenham_ellipse(image_obj, (2*x+2, x+1), (2*x_orig+2, x_orig), 0)#angle_min = np.pi # -45*3.14159/180.0
+	bresenham_ellipse(image_obj, (x+1, (5*x+5)/2), (x*1.5, x*0.5), 0, ABCD=(1.25, -1, 1, -(x+1)*(x+1)))
+	bresenham_ellipse(image_obj, (3*x+3, (5*x+5)/2), (x*1.5, x*0.5), 0, ABCD=(1.25, 1, 1, -(x+1)*(x+1)))
+
 	return image_obj
 
 
@@ -261,6 +303,27 @@ def create_cylinder(x):
 	del draw_obj
 	ImageDraw.floodfill(image_obj,(2*x+2, x+1), (255,255,255,255)) #top
 	ImageDraw.floodfill(image_obj,(2*x+2, 3*x+3), (255,255,255,255)) #side
+	return image_obj
+
+
+
+
+def create_staircase(x, l):
+	img_h = 4 * x + 5
+	img_w = 4 * x + 5
+	image_obj = Image.new('RGBA', (img_w,img_h), color=(0,0,0,0))
+	draw_obj = ImageDraw.Draw(image_obj)
+	
+	draw_obj.line([(0, x+1), (2*x+2, 0), (4*x+4, x+1), (2*x+1, 2*x+2), (0, x+1)], fill=(0,0,0,255))
+	draw_obj.line([(0, x+1), (0, 3*x+3), (2*x+2, 4*x+4), (4*x+4, 3*x+3), (4*x+4, x+1)], fill=(0,0,0,255))
+	draw_obj.line([(2*x+2, 2*x+2), (2*x+2, 4*x+4)], fill=(0,0,0,255))
+	for i in range(x/l):
+		draw_obj.line([(2*x+2 + 2*l*i, 4*x+4 - 3*l*(i+1)), (2*x+2 + 2*l*i+2*l, 4*x+4 - 3*l*(i+1)-l)], fill=(0,0,0,255))
+		draw_obj.line([(2*x+2 + 2*l*i, 4*x+4 - 3*l*i-l), (2*x+2 + 2*l*i, 4*x+4 - 3*l*(i+1))], fill=(0,0,0,255))
+
+	del draw_obj
+	
+	
 	return image_obj
 
 
@@ -400,16 +463,18 @@ def tile3D(map, tiles, x):
 					image_obj.paste(tile, (w_offset, h_offset), tile)
 	return image_obj
 
-
+import sys
 if __name__ == "__main__":
+	#create_fillet(32).save("test_fillet.png")
+	create_staircase(32, 2).save("test_staircase.png")
+	sys.exit()
 	# Demonstration
-	x = 47
+	x = 100 #47
 	# Base unit
 	create_cube(x).save("test_cube.png")
 	create_cylinder(x).save("test_cylinder.png")
 	create_brick_cylinder(x, 12, 8).save("test_brick_cylinder.png")
 	create_brick_cube(x, 12, 8).save("test_brick_cube.png")
-	create_fillet(x).save("test_fillet.png")
 
 	# Hello world
 	tiles = [None, create_brick_cube(x, 12, 8), create_brick_cylinder(x, 12, 8)]

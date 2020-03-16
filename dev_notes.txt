@@ -90,8 +90,125 @@ ellipse in polar:
 r = a*b/sqrt((a*sin(t))^2 + (b*cos(t))^2)
 
 
-
+ELLIPSE ROTATION
 (x/a)^2 + (y/b)^2 = 1
- b^2 *(x*cos(t) - y*sin(t))^2 +  a^2 *(x*cos(t) + y*sin(t)) = a^2 * b^2
 
--a^2*b^2 + a^2*x^2*cos(t)^2 + a^2*x*y*sin(2*t) + a^2*y^2*sin(t)^2 + b^2*x^2*cos(t)^2 - b^2*x*y*sin(2*t) + b^2*y^2*sin(t)^2 = 0
+b^2 *(x*cos(t) - y*sin(t))^2 +  a^2 *(x*sin(t) + y*cos(t)) = a^2 * b^2
+
+-a^2*b^2 + b^2*x^2*cos(t)^2 - 2*b^2*x*y*sin(t)*cos(t) + b^2*y^2*sin(t)^2 + a^2*x^2*sin(t)^2 + a^2*y^2*cos(t)^2 + a^2*x*y*sin(t)*cos(t) = 0
+
+- a^2*b^2 
++ (a^2*sin(t)^2+b^2*cos(t)^2) *x^2 
++ 2*(a^2 - b^2)*sin(t)*cos(t) *x*y 
++ (a^2*cos(t)^2+b^2*sin(t)^2) *y^2 
+= 0
+
+
+
+CIRCLE SHEERING
+
+x^2 + y^2 = r^2
+x^2 + (y+s*x)^2 = r^2
+-r^2 + x^2 + s^2*x^2 + 2*s*x*y + y^2 = 0
+-r^2 + (1+s^2)*x^2 + 2*s*x*y + y^2 = 0
+
+
+- r^2
++ (1+s^2) *x^2 
++ 2*s*x*y 
++ y^2 
+= 0
+
+
+therefore we have the system
+a^2*b^2 = r^2
+a^2*sin(t)^2+b^2*cos(t)^2 = 1+s^2
+2*(a^2 - b^2)*sin(t)*cos(t) = 2*s
+a^2*cos(t)^2+b^2*sin(t)^2 = 1
+
+Now begin to solve
+eq1(a) -> a = r/b
+(r/b)^2*sin(t)^2+b^2*cos(t)^2 = 1+s^2
+2*((r/b)^2 - b^2)*sin(t)*cos(t) = 2*s
+(r/b)^2*cos(t)^2+b^2*sin(t)^2 = 1
+
+muliply through to remove rationals
+r^2*sin(t)^2+b^4*cos(t)^2 = (1+s^2)*b^2
+2*(r^2 - b^4)*sin(t)*cos(t) = 2*s*b^2
+r^2*cos(t)^2+b^4*sin(t)^2 = b^2
+
+Apply pythagorean identity
+(r^2-b^4)*sin(t)^2+b^4 = (1+s^2)*b^2
+r^2+(b^4-r^2)*sin(t)^2 = b^2
+
+(r^2-b^4)*sin(t)^2= (1+s^2)*b^2 - b^4
+(b^4-r^2)*sin(t)^2 = b^2 - r^2
+
+(r^2-b^4)/(b^4-r^2) = ((1+s^2)*b^2 - b^4)/(b^2 - r^2)
+-1 = ((1+s^2)*b^2 - b^4)/(b^2 - r^2)
+r^2 - b^2 = (1+s^2)*b^2 - b^4
+b^4 -(2+s^2)*b^2 + r^2 = 0
+
+b = sqrt((2+s^2 +- sqrt((2+s^2) - 2*r^2))/2)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ELLIPSE ROTATION
+- a^2*b^2 
++ (a^2*sin(t)^2+b^2*cos(t)^2) *x^2 
++ 2*(a^2 - b^2)*sin(t)*cos(t) *x*y 
++ (a^2*cos(t)^2+b^2*sin(t)^2) *y^2 
+= 0
+
+- 1
++ ((sin(t)/b)^2+(cos(t)/a)^2) *x^2 
++ 2*((1/b)^2 - (1/a)^2)*sin(t)*cos(t) *x*y 
++ ((cos(t)/b)^2+(sin(t)/a)^2) *y^2 
+= 0
+
+
+
+CIRCLE SHEERING
+- 1
++ (1+s^2)/r^2 *x^2 
++ 2*s/r^2 *x*y 
++ 1/r^2 *y^2 
+= 0
+
+
+therefore we have the system
+(sin(t)/b)^2+(cos(t)/a)^2 = (1+s^2)/r^2
+2*((1/b)^2 - (1/a)^2)*sin(t)*cos(t) = 2*s/r^2
+(cos(t)/b)^2+(sin(t)/a)^2 = 1/r^2
+
+a^2*r^2*sin(t)^2+b^2*r^2*cos(t)^2 = (1+s^2)*a^2*b^2
+2*(a^2*r^2 - b^2*r^2)*sin(t)*cos(t) = 2*s*a^2*b^2
+a^2*cos(t)^2+b^2*sin(t)^2 = a^2*b^2
+
+a,b,t
+
+
+4*(b^2 - r^2)*(b^2*r^2 - b^2*a^2 + r^2*a^2 - r^4) = a^2*b^4
+- r^2*a^2 + (2+s^2)*a^2*b^2 - r^2*b^2 = 0
+
+((2+s^2)*b^2 - r^2)*a^2 = r^2*b^2
+a^2 = r^2*b^2 / ((2+s^2)*b^2 - r^2)
+
+
+4*(b^2 - r^2)*(b^2*r^2*((2+s^2)*b^2 - r^2) - b^4*r^2 + r^4*b^2 - r^4*((2+s^2)*b^2 - r^2)) = r^2*b^6
+
+4*(b^2 - r^2)*((1+s^2)*b^4 - (2+s^2)*r^2*b^2 + r^4) = b^6
+
+
+

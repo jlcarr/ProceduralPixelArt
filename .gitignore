@@ -9,3 +9,4 @@ __pycache__/
 # Don't need the image outputs
 *.png
 out/
+.pdf
