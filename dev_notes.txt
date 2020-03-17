@@ -212,3 +212,13 @@ a^2 = r^2*b^2 / ((2+s^2)*b^2 - r^2)
 
 
 
+
+Future 3 exploration:
+https://www.reddit.com/r/godot/comments/9xttpm/2d_sprites_in_a_3d_plane/
+https://github.com/godotengine/godot/issues/25980
+https://docs.godotengine.org/en/3.2/classes/class_sprite3d.html
+https://www.youtube.com/watch?v=LbyyjmOji0M&feature=youtu.be
+https://www.youtube.com/watch?v=v5TmtUr_4B0
+Look up "billboarding"
+
+

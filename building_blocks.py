@@ -320,17 +320,33 @@ def create_staircase(x, l):
 	
 	draw_obj.line([(0, 3*x+3), (2*x+2, 4*x+4), (4*x+4, 3*x+3), (4*x+4, x+1), (2*x+2, 0)], fill=(0,0,0,255))
 	for i in range(x/l):
-		draw_obj.line([(2*x+2 + 2*l*i, 4*x+4 - 3*l*(i+1)), (2*x+2 + 2*l*i+2*l, 4*x+4 - 3*l*(i+1)-l)], fill=(0,0,0,255))
-		draw_obj.line([(2*x+2 + 2*l*i, 4*x+4 - 3*l*i-l), (2*x+2 + 2*l*i, 4*x+4 - 3*l*(i+1))], fill=(0,0,0,255))
+		# Front, horizontal edge
+		draw_obj.line([(2*x+2 + 2*l*i, 4*x+4 - 3*l*i-2*l), (2*x+2 + 2*l*i+2*l, 4*x+4 - 3*l*i-3*l)], fill=(0,0,0,255))
+		# Front, vertical
+		draw_obj.line([(2*x+2 + 2*l*i, 4*x+4 - 3*l*i), (2*x+2 + 2*l*i, 4*x+4 - 3*l*i-2*l)], fill=(0,0,0,255))
 	for i in range(x/l):
-		draw_obj.line([(2*l*i, 3*x+3 - 3*l*(i+1)), (2*l*i+2*l, 3*x+3 - 3*l*(i+1)-l)], fill=(0,0,0,255))
-		draw_obj.line([(2*l*i, 3*x+3 - 3*l*i-l), (2*l*i, 3*x+3 - 3*l*(i+1))], fill=(0,0,0,255))
+		# Back, horizontal edge
+		draw_obj.line([(2*l*i, 3*x+3 - 3*l*i-2*l), (2*l*i+2*l, 3*x+3 - 3*l*i-3*l)], fill=(0,0,0,255))
+		# Back, vertical
+		draw_obj.line([(2*l*i, 3*x+3 - 3*l*i), (2*l*i, 3*x+3 - 3*l*i-2*l)], fill=(0,0,0,255))
 	for i in range(x/l):
-		draw_obj.line([(2*x+2 + 2*l*i, 4*x+4 - 3*l*(i+1)), (2*l*i, 3*x+3 - 3*l*(i+1))], fill=(0,0,0,255))
-		draw_obj.line([(2*x+2 + 2*l*i, 4*x+4 - 3*l*i-l), (2*l*i, 3*x+3 - 3*l*i-l)], fill=(0,0,0,255))
+		# Convext edge
+		draw_obj.line([(2*l*i, 3*x+3 - 3*l*i-2*l), (2*x+2 + 2*l*i, 4*x+4 - 3*l*i-2*l)], fill=(0,0,0,255))
+		# Concave edge
+		draw_obj.line([(2*l*(i+1), 3*x+3 - 3*l*(i+1)), (2*x+2 + 2*l*(i+1), 4*x+4 - 3*l*(i+1))], fill=(0,0,0,255))
+	i = x/l -1
+	remainder = 2*x+2 - 2*l*i-2*l
+	print(remainder)
+	# final step
+	# Front
+	draw_obj.line([(2*x+2 + 2*l*i+2*l, 4*x+4 - 3*l*i-3*l), (2*x+2 + 2*l*i+2*l, x+1 + remainder/2), (4*x+4, x+1)], fill=(0,0,0,255))
+	# Back
+	draw_obj.line([(2*l*i+2*l, 3*x+3 - 3*l*i-3*l), (2*l*i+2*l, remainder/2), (2*x+2, 0)], fill=(0,0,0,255))
+	# Convex
+	draw_obj.line([(2*x+2 + 2*l*i+2*l, x+1 + remainder/2), (2*l*i+2*l, remainder/2)], fill=(0,0,0,255))
+
 	del draw_obj
-	
-	
+
 	return image_obj
 
 
@@ -473,7 +489,28 @@ def tile3D(map, tiles, x):
 import sys
 if __name__ == "__main__":
 	#create_fillet(32).save("test_fillet.png")
-	create_staircase(64, 6).save("test_staircase.png")
+	x = 64
+	create_staircase(64, 12).save("test_staircase.png")
+	tiles = [None, create_cube(x), create_staircase(x, x/6)]
+	axes_pattern = np.array([
+		[
+			[1, 1, 1],
+			[1, 1, 2],
+			[1, 1, 0]
+		],
+		[
+			[1, 0, 0],
+			[2, 0, 0],
+			[0, 0, 0]
+		],
+		[
+			[0, 0, 0],
+			[0, 0, 0],
+			[0, 0, 0]
+		]
+	])
+	tile3D(axes_pattern, tiles, x).save("stairs_cube.png")
+	
 	sys.exit()
 	# Demonstration
 	x = 100 #47
