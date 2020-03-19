@@ -316,7 +316,7 @@ def create_staircase(x, l):
 	image_obj = Image.new('RGBA', (img_w,img_h), color=(0,0,0,0))
 	draw_obj = ImageDraw.Draw(image_obj)
 	
-	#draw_obj.line([(0, x+1), (2*x+2, 0), (4*x+4, x+1), (2*x+1, 2*x+2), (0, x+1)], fill=(0,0,0,255))
+	#draw_obj.line([(0, x+1), (2*x+2, 0), (4*x+4, x+1), (2*x+1, 2*x+2), (0, x+1)], fill=(255,255,255,255))
 	#draw_obj.line([(0, x+1), (0, 3*x+3), (2*x+2, 4*x+4), (4*x+4, 3*x+3), (4*x+4, x+1)], fill=(0,0,0,255))
 	#draw_obj.line([(2*x+2, 2*x+2), (2*x+2, 4*x+4)], fill=(0,0,0,255))
 	
@@ -324,8 +324,8 @@ def create_staircase(x, l):
 	i_final = x/l -1
 	remainder = 2*x+2 - 2*l*i_final-2*l
 	
-	# Exterior
-	draw_obj.line([(0, 3*x+3), (2*x+2, 4*x+4), (4*x+4, 3*x+3), (4*x+4, x+1), (2*x+2, 0)], fill=(0,0,0,255))
+	# Exterior edges (cube-like)
+	draw_obj.line([(0, 3*x+3), (2*x+2, 4*x+4), (4*x+4, 3*x+3), (4*x+4, x+1), (2*x+1, 0)], fill=(0,0,0,255))
 	for i in range(x/l):
 		# Back, horizontal edge
 		draw_obj.line([(2*l*i, 3*x+3 - 3*l*i-2*l), (2*l*i+2*l, 3*x+3 - 3*l*i-3*l)], fill=(0,0,0,255))
@@ -338,24 +338,70 @@ def create_staircase(x, l):
 	
 	for i in range(x/l):
 		# Front, horizontal edge
-		draw_obj.line([(2*x+2 + 2*l*i, 4*x+4 - 3*l*i-2*l), (2*x+2 + 2*l*i+2*l, 4*x+4 - 3*l*i-3*l)], fill=(0,0,0,255))
+		draw_obj.line([(2*x+2 + 2*l*i, 4*x+4 - (3*l*i+2*l)), (2*x+2 + (2*l*i+2*l), 4*x+4 - (3*l*i+3*l))], fill=(0,0,0,255))
 		# Front, vertical
-		draw_obj.line([(2*x+2 + 2*l*i, 4*x+4 - 3*l*i), (2*x+2 + 2*l*i, 4*x+4 - 3*l*i-2*l)], fill=(0,0,0,255))
+		draw_obj.line([(2*x+2 + 2*l*i, 4*x+4 - 3*l*i), (2*x+2 + 2*l*i, 4*x+4 - (3*l*i+2*l))], fill=(0,0,0,255))
 	# Front, final step
-	draw_obj.line([(2*x+2 + 2*l*i_final+2*l, 4*x+4 - 3*l*i_final-3*l), (2*x+2 + 2*l*i_final+2*l, x+1 + remainder/2), (4*x+4, x+1)], fill=(0,0,0,255))
+	draw_obj.line([(2*x+2 + (2*l*i_final+2*l), 4*x+4 - 3*l*i_final-3*l), (2*x+2 + (2*l*i_final+2*l), x+1 + remainder/2), (4*x+4, x+1)], fill=(0,0,0,255))
 
 	for i in range(x/l):
 		# Convext edge
 		draw_obj.line([(2*l*i, 3*x+3 - 3*l*i-2*l), (2*x+2 + 2*l*i, 4*x+4 - 3*l*i-2*l)], fill=(0,0,0,255))
 		# Concave edge
 		draw_obj.line([(2*l*(i+1), 3*x+3 - 3*l*(i+1)), (2*x+2 + 2*l*(i+1), 4*x+4 - 3*l*(i+1))], fill=(0,0,0,255))
-	# Convex final step
+	# Convex edge, final step
 	draw_obj.line([(2*x+2 + 2*l*i_final+2*l, x+1 + remainder/2), (2*l*i_final+2*l, remainder/2)], fill=(0,0,0,255))
-
 	del draw_obj
 
 	return image_obj
 
+
+
+def create_staircase_l(x, l, lr=-1):
+	img_h = 4 * x + 5
+	img_w = 4 * x + 5
+	image_obj = Image.new('RGBA', (img_w,img_h), color=(0,0,0,0))
+	draw_obj = ImageDraw.Draw(image_obj)
+	
+	#draw_obj.line([(0, x+1), (2*x+2, 0), (4*x+4, x+1), (2*x+1, 2*x+2), (0, x+1)], fill=(255,255,255,255))
+	#draw_obj.line([(0, x+1), (0, 3*x+3), (2*x+2, 4*x+4), (4*x+4, 3*x+3), (4*x+4, x+1)], fill=(0,0,0,255))
+	#draw_obj.line([(2*x+2, 2*x+2), (2*x+2, 4*x+4)], fill=(0,0,0,255))
+	
+	# Final step constants
+	i_final = x/l -1
+	remainder = 2*x+2 - 2*l*i_final-2*l
+	
+	# Exterior edges (cube-like)
+	outline_path = [(2*x+2, 0), (4*x+4, x+1), (4*x+4, 3*x+3), (2*x+1, 4*x+4), (0, 3*x+3), (0, x+1), (2*x+2, 0)]
+	outline_path = outline_path[(1-lr):6-lr]
+	draw_obj.line(outline_path, fill=(0,0,0,255))
+	
+	for i in range(x/l):
+		# Back, horizontal edge
+		draw_obj.line([((1-lr)*(2*x+2)+lr* 2*l*i, 3*x+3 - 3*l*i-2*l), ((1-lr)*(2*x+2)+lr* (2*l*i+2*l), 3*x+3 - 3*l*i-3*l)][::lr], fill=(0,0,0,255))
+		# Back, vertical
+		draw_obj.line([((1-lr)*(2*x+2)+lr* 2*l*i, 3*x+3 - 3*l*i), ((1-lr)*(2*x+2)+lr* 2*l*i, 3*x+3 - (3*l*i+2*l))], fill=(0,0,0,255))
+	# Back final step
+	draw_obj.line([((1-lr)*(2*x+2)+lr* (2*l*i_final+2*l), 3*x+3 - 3*l*i_final-3*l), ((1-lr)*(2*x+2)+lr* (2*l*i_final+2*l), remainder/2), ((1-lr)*(2*x+2)+lr* (2*x+2), 0)][::lr], fill=(0,0,0,255))
+	
+	for i in range(x/l):
+		# Front, horizontal edge
+		draw_obj.line([(2*x+2 +lr* 2*l*i, 4*x+4 - (3*l*i+2*l)), (2*x+2 +lr* (2*l*i+2*l), 4*x+4 - (3*l*i+3*l))][::lr], fill=(0,0,0,255))
+		# Front, vertical
+		draw_obj.line([(2*x+2 +lr* 2*l*i, 4*x+4 - (3*l*i+2*l)), (2*x+2 +lr* 2*l*i, 4*x+4 - 3*l*i)], fill=(0,0,0,255))
+	# Front, final step
+	draw_obj.line([(2*x+2 +lr* (2*l*i_final+2*l), 4*x+4 - 3*l*i_final-3*l), (2*x+2 +lr* (2*l*i_final+2*l), x+1 + remainder/2), ((1+lr)*(2*x+2), x+1)][::lr], fill=(0,0,0,255))
+
+	for i in range(x/l):
+		# Convex edge
+		draw_obj.line([((1-lr)*(2*x+2)+lr* 2*l*i, 3*x+3 - 3*l*i-2*l), (2*x+2 +lr* 2*l*i, 4*x+4 - 3*l*i-2*l)][::lr], fill=(0,0,0,255))
+		# Concave edge
+		draw_obj.line([((1-lr)*(2*x+2)+lr* 2*l*(i+1), 3*x+3 - 3*l*(i+1)), (2*x+2 +lr* 2*l*(i+1), 4*x+4 - 3*l*(i+1))][::lr], fill=(0,0,0,255))
+	# Convex edge, final step # TODO: investigate the correctness of the final convex edge
+	draw_obj.line([((1-lr)*(2*x+2)+lr* 2*l*(i_final+1), remainder/2), (2*x+2 +lr* 2*l*(i_final+1), x+1 + remainder/2)][::lr], fill=(0,0,0,255))
+	del draw_obj
+
+	return image_obj
 
 
 
@@ -497,7 +543,7 @@ import sys
 if __name__ == "__main__":
 	#create_fillet(32).save("test_fillet.png")
 	x = 40
-	create_staircase(x, x/12).save("test_staircase.png")
+	create_staircase_l(x, x/12).save("test_staircase.png")
 	create_cube(x).save("test_cube.png")
 	sys.exit()
 	tiles = [None, create_cube(x), create_staircase(x, x/8)]
