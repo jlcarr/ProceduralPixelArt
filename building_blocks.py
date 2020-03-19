@@ -242,14 +242,18 @@ def create_cube(x):
 	img_w = 4 * x + 5
 	image_obj = Image.new('RGBA',(img_w,img_h),color=(0,0,0,0))
 	draw_obj = ImageDraw.Draw(image_obj)
-	
-	draw_obj.line([(0, x+1), (2*x+2, 0), (4*x+4, x+1), (2*x+1, 2*x+2), (0, x+1)], fill=(0,0,0,255))
-	draw_obj.line([(0, x+1), (0, 3*x+3), (2*x+2, 4*x+4), (4*x+4, 3*x+3), (4*x+4, x+1)], fill=(0,0,0,255))
+
+	# Draw outline
+	draw_obj.line([(0, x+1), (2*x+2, 0), (4*x+4, x+1), (4*x+4, 3*x+3), (2*x+1, 4*x+4), (0, 3*x+3), (0, x+1)], fill=(0,0,0,255))
+	# Fill
+	ImageDraw.floodfill(image_obj,(2*x+2, 2*+2),(255,255,255,255))
+	# Draw upper from edges
+	draw_obj.line([(0, x+1), (2*x+1, 2*x+2), (4*x+4, x+1)], fill=(0,0,0,255))
+	# Draw front edge
 	draw_obj.line([(2*x+2, 2*x+2), (2*x+2, 4*x+4)], fill=(0,0,0,255))
+
 	del draw_obj
-	ImageDraw.floodfill(image_obj,(2*x+2, x+1),(255,255,255,255)) #top
-	ImageDraw.floodfill(image_obj,(x+1, 2*x+2),(255,255,255,255)) # left
-	ImageDraw.floodfill(image_obj,(3*x+3, 2*x+2),(255,255,255,255)) # right
+
 	return image_obj
 
 
@@ -294,8 +298,6 @@ def create_cylinder(x):
 	draw_obj = ImageDraw.Draw(image_obj)
 	
 	x_orig = int((x+1) / np.sqrt(2))
-	#draw_obj.arc([(2*x+2 - 2*x_orig, x+1 - x_orig), (2*x+2 + 2*x_orig, x+1 + x_orig)], 0, 360, fill=(0,0,0,255))
-	#draw_obj.arc([(2*x+2 - 2*x_orig, 3*x+3 - x_orig), (2*x+2 + 2*x_orig, 3*x+3 + x_orig)], 0, 180, fill=(0,0,0,255))
 	bresenham_ellipse(image_obj, (2*x+2, x+1), (2*x_orig+2, x_orig), 0)
 	bresenham_ellipse(image_obj, (2*x+2, 3*x+3), (2*x_orig+2, x_orig), 0, angle_min = np.pi)
 	draw_obj.line([(2*x+2 - 2*x_orig-2, x+1), (2*x+2 - 2*x_orig-2, 3*x+3)], fill=(0,0,0,255))
@@ -318,32 +320,37 @@ def create_staircase(x, l):
 	#draw_obj.line([(0, x+1), (0, 3*x+3), (2*x+2, 4*x+4), (4*x+4, 3*x+3), (4*x+4, x+1)], fill=(0,0,0,255))
 	#draw_obj.line([(2*x+2, 2*x+2), (2*x+2, 4*x+4)], fill=(0,0,0,255))
 	
+	# Final step constants
+	i_final = x/l -1
+	remainder = 2*x+2 - 2*l*i_final-2*l
+	
+	# Exterior
 	draw_obj.line([(0, 3*x+3), (2*x+2, 4*x+4), (4*x+4, 3*x+3), (4*x+4, x+1), (2*x+2, 0)], fill=(0,0,0,255))
-	for i in range(x/l):
-		# Front, horizontal edge
-		draw_obj.line([(2*x+2 + 2*l*i, 4*x+4 - 3*l*i-2*l), (2*x+2 + 2*l*i+2*l, 4*x+4 - 3*l*i-3*l)], fill=(0,0,0,255))
-		# Front, vertical
-		draw_obj.line([(2*x+2 + 2*l*i, 4*x+4 - 3*l*i), (2*x+2 + 2*l*i, 4*x+4 - 3*l*i-2*l)], fill=(0,0,0,255))
 	for i in range(x/l):
 		# Back, horizontal edge
 		draw_obj.line([(2*l*i, 3*x+3 - 3*l*i-2*l), (2*l*i+2*l, 3*x+3 - 3*l*i-3*l)], fill=(0,0,0,255))
 		# Back, vertical
 		draw_obj.line([(2*l*i, 3*x+3 - 3*l*i), (2*l*i, 3*x+3 - 3*l*i-2*l)], fill=(0,0,0,255))
+	# Back final step
+	draw_obj.line([(2*l*i_final+2*l, 3*x+3 - 3*l*i_final-3*l), (2*l*i_final+2*l, remainder/2), (2*x+2, 0)], fill=(0,0,0,255))
+	
+	ImageDraw.floodfill(image_obj,(2*x+2, 2*x+2), (255,255,255,255))
+	
+	for i in range(x/l):
+		# Front, horizontal edge
+		draw_obj.line([(2*x+2 + 2*l*i, 4*x+4 - 3*l*i-2*l), (2*x+2 + 2*l*i+2*l, 4*x+4 - 3*l*i-3*l)], fill=(0,0,0,255))
+		# Front, vertical
+		draw_obj.line([(2*x+2 + 2*l*i, 4*x+4 - 3*l*i), (2*x+2 + 2*l*i, 4*x+4 - 3*l*i-2*l)], fill=(0,0,0,255))
+	# Front, final step
+	draw_obj.line([(2*x+2 + 2*l*i_final+2*l, 4*x+4 - 3*l*i_final-3*l), (2*x+2 + 2*l*i_final+2*l, x+1 + remainder/2), (4*x+4, x+1)], fill=(0,0,0,255))
+
 	for i in range(x/l):
 		# Convext edge
 		draw_obj.line([(2*l*i, 3*x+3 - 3*l*i-2*l), (2*x+2 + 2*l*i, 4*x+4 - 3*l*i-2*l)], fill=(0,0,0,255))
 		# Concave edge
 		draw_obj.line([(2*l*(i+1), 3*x+3 - 3*l*(i+1)), (2*x+2 + 2*l*(i+1), 4*x+4 - 3*l*(i+1))], fill=(0,0,0,255))
-	i = x/l -1
-	remainder = 2*x+2 - 2*l*i-2*l
-	print(remainder)
-	# final step
-	# Front
-	draw_obj.line([(2*x+2 + 2*l*i+2*l, 4*x+4 - 3*l*i-3*l), (2*x+2 + 2*l*i+2*l, x+1 + remainder/2), (4*x+4, x+1)], fill=(0,0,0,255))
-	# Back
-	draw_obj.line([(2*l*i+2*l, 3*x+3 - 3*l*i-3*l), (2*l*i+2*l, remainder/2), (2*x+2, 0)], fill=(0,0,0,255))
-	# Convex
-	draw_obj.line([(2*x+2 + 2*l*i+2*l, x+1 + remainder/2), (2*l*i+2*l, remainder/2)], fill=(0,0,0,255))
+	# Convex final step
+	draw_obj.line([(2*x+2 + 2*l*i_final+2*l, x+1 + remainder/2), (2*l*i_final+2*l, remainder/2)], fill=(0,0,0,255))
 
 	del draw_obj
 
@@ -489,9 +496,11 @@ def tile3D(map, tiles, x):
 import sys
 if __name__ == "__main__":
 	#create_fillet(32).save("test_fillet.png")
-	x = 64
-	create_staircase(64, 12).save("test_staircase.png")
-	tiles = [None, create_cube(x), create_staircase(x, x/6)]
+	x = 40
+	create_staircase(x, x/12).save("test_staircase.png")
+	create_cube(x).save("test_cube.png")
+	sys.exit()
+	tiles = [None, create_cube(x), create_staircase(x, x/8)]
 	axes_pattern = np.array([
 		[
 			[1, 1, 1],
