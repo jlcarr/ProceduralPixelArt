@@ -524,10 +524,11 @@ def tile3D(map, tiles, x):
 import sys
 if __name__ == "__main__":
 	#create_fillet(32).save("test_fillet.png")
-	x = 37
+	x = 35
 	create_staircase(x, x/8).save("test_staircase.png") #x=35, l=35/8
 	create_cube(x).save("test_cube.png")
 	#sys.exit()
+	l=8
 	tiles = [None, create_cube(x), create_staircase(x, x/8, lr=1), create_staircase(x, x/8, lr=-1), create_cylinder(x)]
 	axes_pattern = np.array([
 		[
@@ -547,6 +548,26 @@ if __name__ == "__main__":
 		]
 	])
 	tile3D(axes_pattern, tiles, x).save("stairs_cube.png")
+	
+	tiles = [None, create_cube(x), create_staircase(x, x/8, lr=1), create_staircase(x, x/8, lr=-1), create_staircase(x, x/8, lr=1, fb=-1), create_staircase(x, x/8, lr=-1, fb=-1),create_cylinder(x)]
+	axes_pattern = np.array([
+		[
+			[1, 1, 1],
+			[1, 6, 2],
+			[1, 0, 0]
+		],
+		[
+			[1, 3, 0],
+			[1, 6, 0],
+			[1, 0, 0]
+		],
+		[
+			[0, 0, 0],
+			[4, 6, 0],
+			[1, 0, 0]
+		]
+	])
+	tile3D(axes_pattern, tiles, x).save("stairs_cube2.png")
 	
 	sys.exit()
 	# Demonstration
