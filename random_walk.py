@@ -67,6 +67,9 @@ def gen_walk(x_l, y_l, z_l, walk_len=None):
 			# Move Down Right
 			if x < x_l-1 and z-1 >= 0 and result[x+1,y,z-1] in [-1,3] and result[x+1,y,z] in [-1,0]:
 				moves.append((1,0,-1,3))
+			# Move Right
+			if x < x_l-1 and z-1 >= 0 and result[x+1,y,z-1] in [-1,1] and result[x+1,y,z] in [-1,0]:
+				moves.append((1,0,-1,1))
 		# If on up-back stair
 		if z+1 < z_l and result[x,y,z] == 2 and result[x,y,z+1] == 0:
 			# Move Back
@@ -78,6 +81,9 @@ def gen_walk(x_l, y_l, z_l, walk_len=None):
 			# Move Down Front
 			if y < y_l-1 and z-1 >= 0 and result[x,y+1,z-1] in [-1,2] and result[x,y+1,z] in [-1,0]:
 				moves.append((0,1,-1,2))
+			# Move Front
+			if y < y_l-1 and z-1 >= 0 and result[x,y+1,z-1] in [-1,1] and result[x,y+1,z] in [-1,0]:
+				moves.append((0,1,-1,1))
 		# If on up-right stair
 		if z+1 < z_l and result[x,y,z] == 5 and result[x,y,z+1] == 0:
 			# Move Right
@@ -89,6 +95,9 @@ def gen_walk(x_l, y_l, z_l, walk_len=None):
 			# Move Down Left
 			if x > 0 and z-1 >= 0 and result[x-1,y,z-1] in [-1,5] and result[x-1,y,z] in [-1,0]:
 				moves.append((-1,0,-1,5))
+			# Move left
+			if x > 0 and z-1 >= 0 and result[x-1,y,z-1] in [-1,1] and result[x-1,y,z] in [-1,0]:
+				moves.append((-1,0,-1,1))
 		# If on up-front stair
 		if z+1 < z_l and result[x,y,z] == 4 and result[x,y,z+1] == 0:
 			# Move Front
@@ -100,6 +109,9 @@ def gen_walk(x_l, y_l, z_l, walk_len=None):
 			# Move Down Back
 			if y > 0 and z-1 >= 0 and result[x,y-1,z-1] in [-1,4] and result[x,y-1,z] in [-1,0]:
 				moves.append((0,-1,-1,4))
+			# Move Back
+			if y > 0 and z-1 >= 0 and result[x,y-1,z-1] in [-1,1] and result[x,y-1,z] in [-1,0]:
+				moves.append((0,-1,-1,1))
 		
 		if not moves:
 			break
@@ -121,8 +133,8 @@ def gen_walk(x_l, y_l, z_l, walk_len=None):
 	return result
 
 if __name__ == "__main__":
-	s = 35
-	l=8
+	s = 19
+	l=4
 	
 	tiles = [
 		None,
