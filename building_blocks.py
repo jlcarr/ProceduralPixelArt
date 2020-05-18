@@ -258,6 +258,30 @@ def create_cube(x):
 
 
 
+def create_platform(x,l):
+	# choose x as length
+	# top face is 4*x+3 high and 4*x+5 wide
+	# total cube is now 4*x+5 high and 4*x+5 wide
+	img_h = 4 * x + 5
+	img_w = 4 * x + 5
+	image_obj = Image.new('RGBA',(img_w,img_h),color=(0,0,0,0))
+	draw_obj = ImageDraw.Draw(image_obj)
+
+	# Draw outline
+	draw_obj.line([(0, x+1), (2*x+2, 0), (4*x+4, x+1), (4*x+4, x+1 + l), (2*x+1, 2*x+2 + l), (0, x+1 + l), (0, x+1)], fill=(0,0,0,255))
+	# Fill
+	ImageDraw.floodfill(image_obj,(2*x+2, 2*+2),(255,255,255,255))
+	# Draw upper from edges
+	draw_obj.line([(0, x+1), (2*x+1, 2*x+2), (4*x+4, x+1)], fill=(0,0,0,255))
+	# Draw front edge
+	draw_obj.line([(2*x+2, 2*x+2), (2*x+2, 2*x+2 + l)], fill=(0,0,0,255))
+
+	del draw_obj
+
+	return image_obj
+
+
+
 
 def create_fillet(x):
 	img_h = 4 * x + 5
@@ -529,6 +553,7 @@ if __name__ == "__main__":
 	create_cube(x).save("test_cube.png")
 	#sys.exit()
 	l=8
+	create_platform(x,l).save("test_platform.png")
 	tiles = [None, create_cube(x), create_staircase(x, x/8, lr=1), create_staircase(x, x/8, lr=-1), create_cylinder(x)]
 	axes_pattern = np.array([
 		[
