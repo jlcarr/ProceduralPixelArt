@@ -26,7 +26,7 @@ def bresenham_ellipse(image_obj, mid_xy, ab, theta, angle_max = 2*np.pi, angle_m
 	if ABCD:
 		A,B,C,D = ABCD
 		A,B,C,D = float(A),float(B),float(C),float(D)
-	print(A,B,C,D)
+	#print(A,B,C,D)
 	
 	# boudary between region 8 and 1
 	k1 = -B/(2*C)
