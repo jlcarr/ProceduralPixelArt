@@ -133,20 +133,21 @@ def gen_walk(x_l, y_l, z_l, walk_len=None):
 	return result
 
 if __name__ == "__main__":
-	s = 19
-	l=4
+	s=35
+	#s = 19
+	#l=4
 	
 	tiles = [
 		None,
-		building_blocks.create_cube(s),
-		building_blocks.create_staircase(s, s/8, lr=1),
-		building_blocks.create_staircase(s, s/8, lr=-1),
-		building_blocks.create_staircase(s, s/8, lr=1, fb=-1),
-		building_blocks.create_staircase(s, s/8, lr=-1, fb=-1),
+		building_blocks.create_platform(s, s/4),
+		building_blocks.create_staircase_platform(s, s/8, lr=1),
+		building_blocks.create_staircase_platform(s, s/8, lr=-1),
+		building_blocks.create_staircase_platform(s, s/8, lr=1, fb=-1),
+		building_blocks.create_staircase_platform(s, s/8, lr=-1, fb=-1),
 		building_blocks.create_cylinder(s)
 	]
 	
 	
-	axes_pattern = gen_walk(6,6,6)
+	axes_pattern = gen_walk(8,8,8)
 	
 	building_blocks.tile3D(axes_pattern, tiles, s).save("random_walk.png")
