@@ -234,6 +234,21 @@ def bresenham_ellipse(image_obj, mid_xy, ab, theta, angle_max = 2*np.pi, angle_m
 
 
 
+
+def add_frame(image_obj,x):
+	draw_obj = ImageDraw.Draw(image_obj)
+	# Draw outline
+	draw_obj.line([(0, x+1), (2*x+2, 0), (4*x+4, x+1), (4*x+4, 3*x+3), (2*x+1, 4*x+4), (0, 3*x+3), (0, x+1)], fill=(0,0,0,255))
+	# Draw upper from edges
+	draw_obj.line([(0, x+1), (2*x+1, 2*x+2), (4*x+4, x+1)], fill=(0,0,0,255))
+	# Draw front edge
+	draw_obj.line([(2*x+2, 2*x+2), (2*x+2, 4*x+4)], fill=(0,0,0,255))
+	del draw_obj
+	return image_obj
+
+
+
+
 def create_cube(x):
 	# choose x as length
 	# top face is 4*x+3 high and 4*x+5 wide
@@ -334,6 +349,18 @@ def create_cylinder(x):
 
 
 
+def create_sphere(x):
+	img_h = 4 * x + 5
+	img_w = 4 * x + 5
+	image_obj = Image.new('RGBA', (img_w,img_h), color=(0,0,0,0))
+
+	bresenham_ellipse(image_obj, (2*x+2, 2*x+2), (x+1, x+1), 0)
+	ImageDraw.floodfill(image_obj,(2*x+2, 2*x+2), (255,255,255,255))
+	return image_obj
+
+
+
+
 def create_staircase(x, l, lr=1, fb=1):
 	img_h = 4 * x + 5
 	img_w = 4 * x + 5
@@ -346,7 +373,7 @@ def create_staircase(x, l, lr=1, fb=1):
 	x_front = 2*x+2 + lr*(1-fb)*(x+1)
 	y_front = 4*x+4 - (1-fb)*(x+1)/2
 	# Final step constants
-	i_final = x/l -1
+	i_final = x//l -1
 	remainder = x+1 - l*(i_final+1)
 	
 	# Front-Bottom exterior
@@ -357,7 +384,7 @@ def create_staircase(x, l, lr=1, fb=1):
 		draw_obj.line([(x_front, 0), ((1+lr)*(2*x+2), x+1)][::lr], fill=(0,0,0,255))
 	
 		#Back
-		for i in range(x/l):
+		for i in range(x//l):
 			# Back, horizontal edge
 			draw_obj.line([(x_back + fb*lr*2*l*i, y_back - l*((2+fb)*i+2)), (x_back + fb*lr*2*l*(i+1), y_back - (2+fb)*l*(i+1))][::fb*lr], fill=(0,0,0,255))
 			# Back, vertical
@@ -368,7 +395,7 @@ def create_staircase(x, l, lr=1, fb=1):
 		#Fill the color by the hull, right in the middle
 		ImageDraw.floodfill(image_obj,(2*x+2, 2*x+2), (255,255,255,255))
 		
-		for i in range(x/l):
+		for i in range(x//l):
 			# Concave edge
 			draw_obj.line([(x_back + lr*2*l*(i+1), y_back - 3*l*(i+1)), (x_front + lr*2*l*(i+1), y_front - 3*l*(i+1))][::fb*lr], fill=(0,0,0,255))
 	else:
@@ -381,7 +408,7 @@ def create_staircase(x, l, lr=1, fb=1):
 	#Front Top exterior
 	draw_obj.line([((1+fb*lr)*(2*x+2), x+1), ((1+fb*lr)*(2*x+2), 3*x+3)], fill=(0,0,0,255))
 
-	for i in range(x/l):
+	for i in range(x//l):
 		# Convex edge
 		draw_obj.line([(x_back + fb*lr*2*l*i, y_back - l*((2+fb)*i+2)), (x_front + fb*lr*2*l*i, y_front - l*((2+fb)*i+2))][::lr], fill=(0,0,0,255))
 
@@ -397,7 +424,7 @@ def create_staircase(x, l, lr=1, fb=1):
 	# Convex edge, final step
 	draw_obj.line([(x_back + fb*lr*2*l*(i_final+1), (1-fb)*(x+1)/2 + fb*remainder), (x_front + fb*lr*2*l*(i_final+1), (3-fb)*(x+1)/2 + fb*remainder)][::lr], fill=(0,0,0,255)) #(2*x+2 - lr*(1-fb)*(x+1), (1-fb)*(x+1)/2)
 
-	for i in range(x/l):
+	for i in range(x//l):
 		# Front, horizontal edge
 		draw_obj.line([(x_front + fb*lr*2*l*i, y_front - l*((2+fb)*i+2)), (x_front + fb*lr*2*l*(i+1), y_front - (2+fb)*l*(i+1))][::fb*lr], fill=(0,0,0,255))
 		# Front, vertical
@@ -423,7 +450,7 @@ def create_staircase_platform(x, l, lr=1, fb=1):
 	x_front = 2*x+2 + lr*(1-fb)*(x+1)
 	y_front = 4*x+4 - (1-fb)*(x+1)/2
 	# Final step constants
-	i_final = x/l -1
+	i_final = x//l -1
 	remainder = x+1 - l*(i_final+1)
 	
 	if fb > 0:
@@ -431,7 +458,7 @@ def create_staircase_platform(x, l, lr=1, fb=1):
 		draw_obj.line([(x_front, 0), ((1+lr)*(2*x+2), x+1)][::lr], fill=(0,0,0,255))
 		
 		# Front-Bottom exterior
-		for i in range(x/l):
+		for i in range(x//l):
 			# Front, horizontal edge
 			draw_obj.line([(x_front + fb*lr*2*l*i, y_front - l*((2+fb)*i+2) + 2*l), (x_front + fb*lr*2*l*(i+1), y_front - (2+fb)*l*(i+1) + 2*l)][::fb*lr], fill=(0,0,0,255))
 			# Front, vertical
@@ -444,7 +471,7 @@ def create_staircase_platform(x, l, lr=1, fb=1):
 			draw_obj.line([(2*x+2, 4*x+4), (4*x+4, 3*x+3)], fill=(0,0,0,255))
 
 		#Back
-		for i in range(x/l):
+		for i in range(x//l):
 			# Back, horizontal edge
 			draw_obj.line([(x_back + fb*lr*2*l*i, y_back - l*((2+fb)*i+2)), (x_back + fb*lr*2*l*(i+1), y_back - (2+fb)*l*(i+1))][::fb*lr], fill=(0,0,0,255))
 			# Back, vertical
@@ -455,7 +482,7 @@ def create_staircase_platform(x, l, lr=1, fb=1):
 		#Fill the color by the hull, right in the middle
 		ImageDraw.floodfill(image_obj,(2*x+2, 2*x+2), (255,255,255,255))
 		
-		for i in range(x/l):
+		for i in range(x//l):
 			# Concave edge
 			draw_obj.line([(x_back + lr*2*l*(i+1), y_back - 3*l*(i+1)), (x_front + lr*2*l*(i+1), y_front - 3*l*(i+1))][::fb*lr], fill=(0,0,0,255))
 	else:
@@ -470,7 +497,7 @@ def create_staircase_platform(x, l, lr=1, fb=1):
 	draw_obj.line([((1+fb*lr)*(2*x+2), x+1), ((1+fb*lr)*(2*x+2), x+1 + 2*l)], fill=(0,0,0,255))
 
 
-	for i in range(x/l):
+	for i in range(x//l):
 		# Convex edge
 		draw_obj.line([(x_back + fb*lr*2*l*i, y_back - l*((2+fb)*i+2)), (x_front + fb*lr*2*l*i, y_front - l*((2+fb)*i+2))][::lr], fill=(0,0,0,255))
 		if fb < 0:
@@ -484,7 +511,7 @@ def create_staircase_platform(x, l, lr=1, fb=1):
 		#return image_obj
 		ImageDraw.floodfill(image_obj,(2*x+2, 2*x+2), (255,255,255,255))
 		# Front-Bottom exterior
-		for i in range(x/l):
+		for i in range(x//l):
 			# Front, horizontal edge
 			draw_obj.line([(x_front + fb*lr*2*l*i, y_front - l*((2+fb)*i+2) + 2*l), (x_front + fb*lr*2*l*(i+1), y_front - (2+fb)*l*(i+1) + 2*l)][::fb*lr], fill=(0,0,0,255))
 			# Front, vertical
@@ -502,7 +529,7 @@ def create_staircase_platform(x, l, lr=1, fb=1):
 	# Convex edge, final step
 	draw_obj.line([(x_back + fb*lr*2*l*(i_final+1), (1-fb)*(x+1)/2 + fb*remainder), (x_front + fb*lr*2*l*(i_final+1), (3-fb)*(x+1)/2 + fb*remainder)][::lr], fill=(0,0,0,255)) #(2*x+2 - lr*(1-fb)*(x+1), (1-fb)*(x+1)/2)
 
-	for i in range(x/l):
+	for i in range(x//l):
 		# Front, horizontal edge
 		draw_obj.line([(x_front + fb*lr*2*l*i, y_front - l*((2+fb)*i+2)), (x_front + fb*lr*2*l*(i+1), y_front - (2+fb)*l*(i+1))][::fb*lr], fill=(0,0,0,255))
 		# Front, vertical
@@ -654,14 +681,19 @@ def tile3D(map, tiles, x):
 import sys
 if __name__ == "__main__":
 	#create_fillet(32).save("test_fillet.png")
-	x = 35
-	create_staircase(x, x/8).save("test_staircase.png") #x=35, l=35/8
-	create_staircase_platform(x,x/8,fb=1,lr=1).save("test_staircase_platform.png")
+	x = 9
+	l = 2
+	create_staircase(x, l).save("test_staircase.png") #x=35, l=35/8
+	create_staircase_platform(x, l, fb=1,lr=1).save("test_staircase_platform.png")
 	create_cube(x).save("test_cube.png")
-	#sys.exit()
+	add_frame(create_sphere(x), x).save("test_sphere_frame.png")
+	create_sphere(x).save("test_sphere.png")
+	create_platform(x, l).save("test_platform.png")
+	sys.exit()
+
 	l=8
 	create_platform(x,l).save("test_platform.png")
-	tiles = [None, create_cube(x), create_staircase(x, x/8, lr=1), create_staircase(x, x/8, lr=-1), create_cylinder(x)]
+	tiles = [None, create_cube(x), create_staircase(x, x//8, lr=1), create_staircase(x, x//8, lr=-1), create_cylinder(x)]
 	axes_pattern = np.array([
 		[
 			[1, 1, 1],
@@ -681,7 +713,7 @@ if __name__ == "__main__":
 	])
 	tile3D(axes_pattern, tiles, x).save("stairs_cube.png")
 	
-	tiles = [None, create_cube(x), create_staircase(x, x/8, lr=1), create_staircase(x, x/8, lr=-1), create_staircase(x, x/8, lr=1, fb=-1), create_staircase(x, x/8, lr=-1, fb=-1),create_cylinder(x)]
+	tiles = [None, create_cube(x), create_staircase(x, x//8, lr=1), create_staircase(x, x//8, lr=-1), create_staircase(x, x//8, lr=1, fb=-1), create_staircase(x, x//8, lr=-1, fb=-1),create_cylinder(x)]
 	axes_pattern = np.array([
 		[
 			[1, 1, 1],
