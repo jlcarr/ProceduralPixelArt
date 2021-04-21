@@ -2,6 +2,20 @@
 Tools for procedural generation of isometric pixel art.
 
 ## Description
+### The Projection
+The projection used is actually NOT an isometric projection, it is a related but slightly different type of axonometric projection: **dimetric projection**.  
+This can be seen by examining the drawing of cubes: the vertical axis shorter than those in horizontal plane (which are identical).  
+#### Mathematics
+The projection matrix can be derived easily from the unit-cube:
+
+![\begin{bmatrix}1&0&-1\\-1&2&-1\end{bmatrix}](https://render.githubusercontent.com/render/math?math=%5Cbegin%7Bbmatrix%7D1%260%26-1%5C%5C-%5Cfrac%7B1%7D%7B2%7D%261%26-%5Cfrac%7B1%7D%7B2%7D%5Cend%7Bbmatrix%7D)
+
+The nullspace of which is:
+
+![\left\{\begin{bmatrix}1\\1\\1\end{bmatrix}\right\}](https://render.githubusercontent.com/render/math?math=%5Cleft%5C%7B%5Cbegin%7Bbmatrix%7D1%5C%5C1%5C%5C1%5Cend%7Bbmatrix%7D%5Cright%5C%7D)
+
+Which makes logical sense. 
+
 ### Included Generators
 #### Primitives
 - Lines (use PIL's `ImageDraw.line`)
@@ -34,3 +48,6 @@ Tools for procedural generation of isometric pixel art.
 ### Python Imaging Library (PIL)
 - https://pillow.readthedocs.io/en/stable/index.html
 - https://pillow.readthedocs.io/en/stable/reference/ImageDraw.html
+### Projections
+- https://en.wikipedia.org/wiki/Axonometric_projection
+- https://en.wikipedia.org/wiki/Kernel_(linear_algebra)

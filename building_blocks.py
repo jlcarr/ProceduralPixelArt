@@ -18,13 +18,13 @@ def create_platform(x,l):
 	draw_obj = ImageDraw.Draw(image_obj)
 
 	# Draw outline
-	draw_obj.line([(0, x+1), (2*x+2, 0), (4*x+4, x+1), (4*x+4, x+1 + l), (2*x+1, 2*x+2 + l), (0, x+1 + l), (0, x+1)], fill=(0,0,0,255))
+	draw_obj.line([(0, x+1), (2*x+2, 0), (4*x+4, x+1), (4*x+4, x+1 + 2*l), (2*x+1, 2*x+2 + 2*l), (0, x+1 + 2*l), (0, x+1)], fill=(0,0,0,255))
 	# Fill
 	ImageDraw.floodfill(image_obj,(2*x+2, 2*+2),(255,255,255,255))
 	# Draw upper from edges
 	draw_obj.line([(0, x+1), (2*x+1, 2*x+2), (4*x+4, x+1)], fill=(0,0,0,255))
 	# Draw front edge
-	draw_obj.line([(2*x+2, 2*x+2), (2*x+2, 2*x+2 + l)], fill=(0,0,0,255))
+	draw_obj.line([(2*x+2, 2*x+2), (2*x+2, 2*x+2 + 2*l)], fill=(0,0,0,255))
 
 	del draw_obj
 
@@ -355,3 +355,8 @@ if __name__ == "__main__":
 	create_staircase(x, l, fb=-1,lr=1).save("./images/staircase_rf_sprite.png")
 	create_staircase(x, l, fb=1,lr=-1).save("./images/staircase_lb_sprite.png")
 	create_staircase(x, l, fb=-1,lr=-1).save("./images/staircase_lf_sprite.png")
+
+	create_staircase_platform(x, l, fb=1,lr=1).save("./images/staircase_platform_rb_sprite.png")
+	create_staircase_platform(x, l, fb=-1,lr=1).save("./images/staircase_platform_rf_sprite.png")
+	create_staircase_platform(x, l, fb=1,lr=-1).save("./images/staircase_platform_lb_sprite.png")
+	create_staircase_platform(x, l, fb=-1,lr=-1).save("./images/staircase_platform_lf_sprite.png")
