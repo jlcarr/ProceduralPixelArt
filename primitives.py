@@ -5,14 +5,21 @@ from PIL import Image, ImageDraw
 import numpy as np
 
 
-def project_to_pixel(x, x_coord, y_coord, z_coord):
+def project_to_pixel(x, x_coord, y_coord, z_coord, y_rot=0):
 	"""Takes xyz coordinates and projects them down to a pixel coordinate
 	"""
 	projection_matrix = np.array([
 		[-1, 0, 1],
 		[1/2.0, -1, 1/2.0]
 	])
-	result = projection_matrix.dot(np.array([x_coord, y_coord, z_coord]))
+	rotation_matrix = np.array([
+		[np.cos(np.radians(y_rot)), 0, -np.sin(np.radians(y_rot))],
+		[0, 1, 0],
+		[np.sin(np.radians(y_rot)), 0, np.cos(np.radians(y_rot))]
+	])
+	result = np.array([x_coord, y_coord, z_coord])
+	result = rotation_matrix.dot(result)
+	result = projection_matrix.dot(result)
 	result *= x+1
 	result += 2*x+2
 	return tuple(np.round(result).astype(int))

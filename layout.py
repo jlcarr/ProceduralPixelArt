@@ -4,6 +4,19 @@ import numpy as np
 
 
 
+def sprite_sheet(tiles, s):
+	side = 4 * s + 5
+	
+	img_h = len(tiles) * side
+	img_w = len(tiles[0]) * side
+	image_obj = Image.new('RGBA', (img_w,img_h), color=(0,0,0,0))
+	
+	for i,row in enumerate(tiles):
+		for j,tile in enumerate(row):
+			image_obj.paste(tile, (side*j, side*i), tile)
+	return image_obj
+
+
 def tile2D(map, tiles, x):
 	h_shift = x+1
 	w_shift = 2*x+2
@@ -13,7 +26,6 @@ def tile2D(map, tiles, x):
 	print(img_w,img_h)
 	image_obj = Image.new('RGBA', (img_w,img_h), color=(0,0,0,0))
 	
-
 	for i_y in np.arange(0, map.shape[0]):
 		for i_x in np.arange(0, map.shape[1]):
 			tile = tiles[map[i_y, i_x]]
@@ -22,8 +34,6 @@ def tile2D(map, tiles, x):
 			if tile:
 				image_obj.paste(tile, (w_offset, h_offset), tile)
 	return image_obj
-
-
 
 
 def tile3D(map, tiles, x):
@@ -47,14 +57,49 @@ def tile3D(map, tiles, x):
 
 
 if __name__ == "__main__":
+	from primitives import *
+	from building_blocks import *
+	from person import *
 	x = 9
 	l = 2
 	
+	# Spritesheet
+	tiles = [
+		[
+			create_cube(x),
+			create_cylinder(x),
+			create_platform(x, l),
+			create_sphere(x)
+		],
+		[
+			create_staircase(x, l, lr=lr, fb=fb)
+				for lr in [-1,1]
+					for fb in [-1,1]
+		],
+		[
+			create_staircase_platform(x, l, lr=lr, fb=fb)
+				for lr in [-1,1]
+					for fb in [-1,1]
+		]
+	]
+	sprite_sheet(tiles, x).save("./images/spritesheet.png")
+	
+	
+	# Sticksheet
+	tiles = [
+		[
+			create_stick(x, step=step, orientation=45*orientation)
+				for step in range(8)
+		]
+			for orientation in range(8)
+	]
+	sprite_sheet(tiles, x).save("./images/sticksheet.png")
+
 
 	# Hello world
 	tiles = [
 		None,
-		create_cube(x, 12, 8)
+		create_cube(x)
 	]
 	hello_pattern = np.array(
 		[

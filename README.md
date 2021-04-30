@@ -30,6 +30,7 @@ Which makes logical sense.
 - Platform
 - Stairs
 #### Layout
+- `sprite_sheet`
 - `Tile2D`
 - `Tile3D`
 
@@ -51,3 +52,4 @@ Which makes logical sense.
 ### Projections
 - https://en.wikipedia.org/wiki/Axonometric_projection
 - https://en.wikipedia.org/wiki/Kernel_(linear_algebra)
+- https://en.wikipedia.org/wiki/Rotation_matrix

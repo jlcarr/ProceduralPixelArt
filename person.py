@@ -4,7 +4,7 @@ from math import floor
 from primitives import *
 
 
-def create_stick(s, step=-1):
+def create_stick(s, step=-1, orientation=0):
 	"""draws a stick person with a walk animation
 	"""
 	img_h = 4 * s + 5
@@ -12,15 +12,16 @@ def create_stick(s, step=-1):
 	image_obj = Image.new('RGBA',(img_w,img_h),color=(0,0,0,0))
 	draw_obj = ImageDraw.Draw(image_obj)
 	
-	peak = project_to_pixel(s, 0, 0.85, 0)
+	peak = project_to_pixel(s, 0, 0.85, 0, y_rot=orientation)
 	#head
-	head = project_to_pixel(s, 0, 0.85, 0)
+	head = project_to_pixel(s, 0, 0.85, 0, y_rot=orientation)
 	r = int(0.15*(s+1))
 	bresenham_ellipse(image_obj, head,(r,r),0)
+	ImageDraw.floodfill(image_obj, (int(head[0]),int(head[1])),(255,255,255,255))
 	
 	#body
-	neck = project_to_pixel(s, 0, 0.7, 0)
-	groin = project_to_pixel(s, 0, 0, 0)
+	neck = project_to_pixel(s, 0, 0.7, 0, y_rot=orientation)
+	groin = project_to_pixel(s, 0, 0, 0, y_rot=orientation)
 	draw_obj.line([neck, groin], fill=(0,0,0,255))
 	
 	
@@ -48,22 +49,22 @@ def create_stick(s, step=-1):
 	
 	#legs
 	#left leg
-	l_knee = project_to_pixel(s, stance/2, knee_height, stride/2*l_knee_swing)
-	l_foot = project_to_pixel(s, stance, -1+l_touch*stance, stride*stride_phase)
-	l_toe = project_to_pixel(s, stance, -1+l_touch*stance, stride*stride_phase + stance)
+	l_knee = project_to_pixel(s, stance/2, knee_height, stride/2*l_knee_swing, y_rot=orientation)
+	l_foot = project_to_pixel(s, stance, -1+l_touch*stance, stride*stride_phase, y_rot=orientation)
+	l_toe = project_to_pixel(s, stance, -1+l_touch*stance, stride*stride_phase + stance, y_rot=orientation)
 	draw_obj.line([groin, l_knee, l_foot, l_toe], fill=(0,0,0,255))
 	#right leg
-	r_knee = project_to_pixel(s, -stance/2, knee_height, stride/2*r_knee_swing)
-	r_foot = project_to_pixel(s, -stance, -1+r_touch*stance, -stride*stride_phase)
-	r_toe = project_to_pixel(s, -stance, -1+r_touch*stance, -stride*stride_phase + stance)
+	r_knee = project_to_pixel(s, -stance/2, knee_height, stride/2*r_knee_swing, y_rot=orientation)
+	r_foot = project_to_pixel(s, -stance, -1+r_touch*stance, -stride*stride_phase, y_rot=orientation)
+	r_toe = project_to_pixel(s, -stance, -1+r_touch*stance, -stride*stride_phase + stance, y_rot=orientation)
 	draw_obj.line([groin, r_knee, r_foot, r_toe], fill=(0,0,0,255))
 	
 	#arms
 	#left arm
-	l_arm = project_to_pixel(s, 0.1, 0, -stride_phase*stride/2)
+	l_arm = project_to_pixel(s, 0.1, 0, -stride_phase*stride/2, y_rot=orientation)
 	draw_obj.line([neck, l_arm], fill=(0,0,0,255))
 	#right arm
-	r_arm = project_to_pixel(s, -0.1, 0, stride_phase*stride/2)
+	r_arm = project_to_pixel(s, -0.1, 0, stride_phase*stride/2, y_rot=orientation)
 	draw_obj.line([neck, r_arm], fill=(0,0,0,255))
 	
 	del draw_obj
@@ -122,16 +123,18 @@ if __name__ == "__main__":
 	#s = 120
 	#l=4
 	#create_person_front(s).save('./images/person.png')
-	s = 29
+	s = 50
 	create_stick(s).save('./images/stick.png')
 
 	size = 4*s+5
 	anim_frames = []
-	for i in range(8):
-		frame = create_stick(s, step=i)
-		canvas = Image.new(mode='RGBA',size=(size,size), color=(255,255,255,0))
-		canvas.paste(frame, (0,0), mask=frame)
-		anim_frames.append(canvas)
+	for j in range(8):
+		orientation = j*360/8
+		for i in range(8):
+			frame = create_stick(s, step=i, orientation=orientation)
+			canvas = Image.new(mode='RGBA',size=(size,size), color=(255,255,255,0))
+			canvas.paste(frame, (0,0), mask=frame)
+			anim_frames.append(canvas)
 
 	anim_frames[0].save(fp='./images/stick_walk.gif', format='GIF', append_images=anim_frames[1:],
 		save_all=True, duration=200, loop=0)
