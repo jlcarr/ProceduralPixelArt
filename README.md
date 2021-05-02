@@ -41,17 +41,18 @@ Which makes logical sense.
 - **x**/**s**: Base measurement.
    - Total image will be `4*x+5` high and `4*x+5` wide
 - **l**: The height of each step.
-   - The final steps will be correctly proportioned iff `l-1 == x%l` i.e. `x+1` is a multiple of `l`
+   - The final steps will be correctly proportioned iff `(x+1)%l == 0` i.e. `x+1` is a multiple of `l`
 - **h_sep**: The height separation for bricks.
-   - The bricking will be correctly proprtioned iff `2*(x+1)%h_sep == 0`
+   - The bricking will be correctly proportioned iff `2*(x+1)%h_sep == 0`
 - **w_sep**: The width separation for bricks.
-   - The bricking will be correctly proprtioned iff `4*(x+1)%w_sep == 0`
+   - The bricking will be correctly proportioned iff `2*(x+1)%w_sep == 0`
 
 #### Example Values: Small
 - **x**: 9
 - **l**: 2
 - **h_sep**: 5
-- **w_sep**: 8
+- **w_sep**: 10
+
 Makes 41x41 images.
 
 

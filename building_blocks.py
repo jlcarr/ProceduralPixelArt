@@ -2,6 +2,7 @@
 """
 from PIL import Image, ImageDraw
 import numpy as np
+from scipy import ndimage
 
 from primitives import *
 
@@ -342,11 +343,40 @@ def create_brick_cylinder(x, w_sep, h_sep):
 
 
 
+def rust(image_obj, s, iters=2, prob=9, clean=True):
+	# convert to 1bit, where while=0,black=1 (for math), stored as uint8
+	image_array = np.array(image_obj.convert(mode='LA'))
+	rust_array = 1 - image_array[:,:,0]//255
+
+	#kern = np.ones((3,3), dtype=np.uint8)
+	kern = np.array([[0,1,0],[1,0,1],[0,1,0]], dtype=np.uint8)
+	for i in range(iters):
+		neighbors = ndimage.convolve(rust_array, kern, mode='constant', cval=0)
+		neighbors *= neighbors
+		sample = np.random.randint(0, high=prob, size=rust_array.shape, dtype=np.uint8)
+		rust_array = rust_array | (neighbors > sample).astype(np.uint8)
+
+	if clean:
+		for i in range(iters):
+			neighbors = ndimage.convolve(rust_array, kern, mode='constant', cval=0)
+			rust_array = rust_array & (neighbors > 1).astype(np.uint8)
+		rust_array = rust_array | (1 - image_array[:,:,0]//255)
+
+	# convert back
+	rust_array = 1-rust_array
+	rust_array *= 255	
+	image_obj.paste(Image.fromarray(rust_array), (0,0), mask=image_obj)
+	
+	return image_obj
+
+
+
+
 if __name__ == "__main__":
 	#create_fillet(32).save("test_fillet.png")
 	x = 9
 	l = 2
-	w_sep = 8
+	w_sep = 10
 	h_sep = 5
 	
 	create_brick_cube(x, w_sep, h_sep).save("./images/brick_cube.png")
@@ -365,3 +395,15 @@ if __name__ == "__main__":
 	create_staircase_platform(x, l, fb=-1,lr=1).save("./images/staircase_platform_rf_sprite.png")
 	create_staircase_platform(x, l, fb=1,lr=-1).save("./images/staircase_platform_lb_sprite.png")
 	create_staircase_platform(x, l, fb=-1,lr=-1).save("./images/staircase_platform_lf_sprite.png")
+
+	x = 19
+	w_sep = 16
+	h_sep = 10
+	l = 4
+	rust(create_brick_cube(x, w_sep, h_sep), x).save("./images/rusted_brick_cube.png")
+	rust(create_brick_cylinder(x, w_sep, h_sep), x).save("./images/rusted_brick_cylinder.png")
+	rust(create_brick_cube(x, w_sep, h_sep), x).save("./images/rusted_brick_cube.png")
+	rust(create_staircase(x, l, fb=1,lr=1), x).save("./images/rusted_staircase_rb_sprite.png")
+	rust(create_staircase(x, l, fb=-1,lr=1), x).save("./images/rusted_staircase_rf_sprite.png")
+	rust(create_staircase(x, l, fb=1,lr=-1), x).save("./images/rusted_staircase_lb_sprite.png")
+	rust(create_staircase(x, l, fb=-1,lr=-1), x).save("./images/rusted_staircase_lf_sprite.png")

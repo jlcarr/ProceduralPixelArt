@@ -5,6 +5,8 @@ from layout import *
 if __name__ == "__main__":
 	x = 9
 	l = 2
+	h_sep = 5
+	w_sep = 10
 	
 
 	# Hello world
@@ -70,6 +72,15 @@ if __name__ == "__main__":
 		]
 	])
 	tile3D(axes_pattern, tiles, x).save("./images/stairs_cube.png")
+	# Rusted
+	tiles = [
+		None,
+		rust(create_brick_cube(2*x+1, 2*w_sep, 2*h_sep), 2*x+1),
+		rust(create_staircase(2*x+1, 2*l, lr=1), 2*x+1),
+		rust(create_staircase(2*x+1, 2*l, lr=-1), 2*x+1),
+		rust(create_brick_cylinder(2*x+1, 2*w_sep, 2*h_sep), 2*x+1)
+	]
+	tile3D(axes_pattern, tiles, 2*x+1).save("./images/rusted_stairs_cube.png")
 	
 	
 	# The stairs_cube 2
@@ -100,6 +111,17 @@ if __name__ == "__main__":
 		]
 	])
 	tile3D(axes_pattern, tiles, x).save("./images/stairs_cube2.png")
+	# Rusted
+	tiles = [
+		None,
+		rust(create_brick_cube(2*x+1, 2*w_sep, 2*h_sep), 2*x+1),
+		rust(create_staircase(2*x+1, 2*l, lr=1), 2*x+1),
+		rust(create_staircase(2*x+1, 2*l, lr=-1), 2*x+1),
+			rust(create_staircase(2*x+1, 2*l, lr=1, fb=-1), 2*x+1),
+		rust(create_staircase(2*x+1, 2*l, lr=-1, fb=-1), 2*x+1),
+		rust(create_brick_cylinder(2*x+1, 2*w_sep, 2*h_sep), 2*x+1)
+	]
+	tile3D(axes_pattern, tiles, 2*x+1).save("./images/rusted_stairs_cube2.png")
 
 
 	# Hollow
