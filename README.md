@@ -18,9 +18,10 @@ Which makes logical sense.
 
 ### Included Generators
 #### Primitives
+- Project a point from clipspace to screenspace `project_to_pixel`
 - Lines (use PIL's `ImageDraw.line`)
-- Ellipses and elliptical arcs (`Brensenham_ellipse`)
-- Cubic frame `add_frame`
+- Ellipses and elliptical arcs (`brensenham_ellipse`)
+- Draw on a cube frame (useful for propotioning) `add_frame`
 - Cube `create_cube`
 - Cylinder `create_cylinder`
 - Sphere `create_sphere`
@@ -29,16 +30,29 @@ Which makes logical sense.
 - Brick Cylinder
 - Platform
 - Stairs
+#### Person
+- Draw a still or walking animated stick person `create_stick`
 #### Layout
 - `sprite_sheet`
 - `Tile2D`
 - `Tile3D`
 
 ### Math and Parameters
-- **x**: Base measurement.
+- **x**/**s**: Base measurement.
    - Total image will be `4*x+5` high and `4*x+5` wide
 - **l**: The height of each step.
    - The final steps will be correctly proportioned iff `l-1 == x%l` i.e. `x+1` is a multiple of `l`
+- **h_sep**: The height separation for bricks.
+   - The bricking will be correctly proprtioned iff `2*(x+1)%h_sep == 0`
+- **w_sep**: The width separation for bricks.
+   - The bricking will be correctly proprtioned iff `4*(x+1)%w_sep == 0`
+
+#### Example Values: Small
+- **x**: 9
+- **l**: 2
+- **h_sep**: 5
+- **w_sep**: 8
+Makes 41x41 images.
 
 
 ## Resources

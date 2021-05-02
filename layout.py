@@ -249,3 +249,13 @@ if __name__ == "__main__":
 	])
 	tile3D(hollow_pattern, tiles, x).save("./images/hollow.png")
 
+	#hollow_brick
+	x = 9
+	h_sep = 5
+	w_sep = 8
+	tiles = [
+		None,
+		create_brick_cube(x, w_sep, h_sep),
+		create_brick_cylinder(x, w_sep, h_sep)
+	]
+	tile3D(hollow_pattern, tiles, x).save("./images/hollow_brick.png")

@@ -251,11 +251,10 @@ def create_staircase_platform(x, l, lr=1, fb=1):
 def create_brick_cube(x, w_sep, h_sep):
 	# Create a base
 	image_obj = create_cube(x)
-	
-	# Create a mask
 	img_h = 4 * x + 5
 	img_w = 4 * x + 5
 	
+	# Create a mask
 	base_mask_obj = Image.new('RGBA', (img_w,img_h), color=(0,0,0,0))
 	draw_mask_obj = ImageDraw.Draw(base_mask_obj)
 	draw_mask_obj.line([(0, 3*x+2), (2*x+2, 4*x+3), (4*x+4, 3*x+2), (4*x+4, 3*x+2 - h_sep+1), (2*x+1, 4*x+3 - h_sep+1), (0, 3*x+2 - h_sep+1), (0, 3*x+2)], fill=(0,0,0,255))
@@ -264,7 +263,7 @@ def create_brick_cube(x, w_sep, h_sep):
 	base_mask_obj = np.array(base_mask_obj)
 	# Create brick mask
 	brick_mask = np.zeros(base_mask_obj.shape, dtype=np.uint8)
-	for i in range(int((x+1)/h_sep)):
+	for i in range((x+1)//h_sep):
 		brick_mask += np.roll(base_mask_obj, -(2*i)*h_sep, axis=0)
 	brick_mask = Image.fromarray(brick_mask)
 	
@@ -276,12 +275,12 @@ def create_brick_cube(x, w_sep, h_sep):
 	# Create basic brick layer
 	brick_layer = image_obj.copy()
 	brick_draw_obj = ImageDraw.Draw(brick_layer)
-	for i in range(int((2*x+2)/h_sep)):
+	for i in range((2*x+2)//h_sep):
 		brick_draw_obj.line([(0, 3*x+3 - ((i+1)*h_sep)), (2*x+2, 4*x+4 - ((i+1)*h_sep)), (4*x+4, 3*x+3 - ((i+1)*h_sep))], fill=(0,0,0,255))
 	del brick_draw_obj
 	brick_staggered = brick_layer.copy()
 	brick_layer.paste(brick_grid, (0, 0), mask=brick_grid)
-	brick_staggered.paste(brick_grid, ((w_sep+1)/2, 0), mask=brick_grid)
+	brick_staggered.paste(brick_grid, ((w_sep+1)//2, 0), mask=brick_grid)
 	
 	# Combine
 	image_obj.paste(brick_layer, mask=brick_mask)
@@ -315,7 +314,7 @@ def create_brick_cylinder(x, w_sep, h_sep):
 	base_mask_obj = np.array(base_mask_obj)
 	# Create brick mask
 	brick_mask = np.zeros(base_mask_obj.shape, dtype=np.uint8)
-	for i in range(int((x+1)/h_sep)):
+	for i in range((x+1)//h_sep):
 		brick_mask += np.roll(base_mask_obj, -(2*i)*h_sep, axis=0)
 	brick_mask = Image.fromarray(brick_mask)
 	
@@ -326,12 +325,12 @@ def create_brick_cylinder(x, w_sep, h_sep):
 
 	# Create basic brick layer
 	brick_layer = image_obj.copy()
-	for i in range(int((2*x+2)/h_sep)):
+	for i in range((2*x+2)//h_sep):
 		#brick_draw_obj.arc([(2*x+2 - 2*x_orig, 3*x+3 - x_orig - ((i+1)*h_sep)), (2*x+2 + 2*x_orig, 3*x+3 + x_orig - ((i+1)*h_sep))], 0, 180, fill=(0,0,0,255))
 		bresenham_ellipse(brick_layer, (2*x+2, 3*x+3 - (i+1)*h_sep), (2*x_orig+2, x_orig), 0, angle_min = np.pi)
 	brick_staggered = brick_layer.copy()
 	brick_layer.paste(brick_grid, (0, 0), mask=brick_grid)
-	brick_staggered.paste(brick_grid, ((w_sep+1)/2, 0), mask=brick_grid)
+	brick_staggered.paste(brick_grid, ((w_sep+1)//2, 0), mask=brick_grid)
 	
 	# Combine
 	image_obj.paste(brick_layer, mask=brick_mask)
@@ -347,6 +346,12 @@ if __name__ == "__main__":
 	#create_fillet(32).save("test_fillet.png")
 	x = 9
 	l = 2
+	w_sep = 8
+	h_sep = 5
+	
+	create_brick_cube(x, w_sep, h_sep).save("./images/brick_cube.png")
+	create_brick_cylinder(x, w_sep, h_sep).save("./images/brick_cylinder.png")
+	
 	create_staircase(x, l).save("./images/test_staircase.png") #x=35, l=35/8
 	create_staircase_platform(x, l, fb=1,lr=1).save("./images/test_staircase_platform.png")
 	create_platform(x, l).save("./images/test_platform.png")
