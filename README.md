@@ -30,6 +30,7 @@ Which makes logical sense.
 - Brick Cylinder
 - Platform
 - Stairs
+- Rust
 #### Person
 - Draw a still or walking animated stick person `create_stick`
 #### Layout

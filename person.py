@@ -5,7 +5,10 @@ from primitives import *
 
 
 def create_stick(s, step=-1, orientation=0):
-	"""draws a stick person with a walk animation
+	"""draws a stick person with a walk animation and orientation.
+	A step value of -1 (default) results in a stick figure standing in a neutral position.
+	The walk cycle is frames long (step=0...7).
+	The orientation is given as an angle in degrees to rotate the figure about the verital axis starting from the x-axis (down-left).
 	"""
 	img_h = 4 * s + 5
 	img_w = 4 * s + 5

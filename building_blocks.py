@@ -343,7 +343,14 @@ def create_brick_cylinder(x, w_sep, h_sep):
 
 
 
-def rust(image_obj, s, iters=2, prob=9, clean=True):
+def rust(image_obj, iters=2, prob=9, clean=True):
+	"""Adds a rusting effect to black and while pixel art PIL image object.
+	The effect works by computing the number of lrud-neighbors of each cell,
+	then turning that cell black (if it wasn't already) with a probability proportional to the number of neighbors.
+	This repears for iters iterations.
+	Then if clean is True, any pixels with only 1 neighbor are removed.
+	"""
+
 	# convert to 1bit, where while=0,black=1 (for math), stored as uint8
 	image_array = np.array(image_obj.convert(mode='LA'))
 	rust_array = 1 - image_array[:,:,0]//255
@@ -400,10 +407,10 @@ if __name__ == "__main__":
 	w_sep = 16
 	h_sep = 10
 	l = 4
-	rust(create_brick_cube(x, w_sep, h_sep), x).save("./images/rusted_brick_cube.png")
-	rust(create_brick_cylinder(x, w_sep, h_sep), x).save("./images/rusted_brick_cylinder.png")
-	rust(create_brick_cube(x, w_sep, h_sep), x).save("./images/rusted_brick_cube.png")
-	rust(create_staircase(x, l, fb=1,lr=1), x).save("./images/rusted_staircase_rb_sprite.png")
-	rust(create_staircase(x, l, fb=-1,lr=1), x).save("./images/rusted_staircase_rf_sprite.png")
-	rust(create_staircase(x, l, fb=1,lr=-1), x).save("./images/rusted_staircase_lb_sprite.png")
-	rust(create_staircase(x, l, fb=-1,lr=-1), x).save("./images/rusted_staircase_lf_sprite.png")
+	rust(create_brick_cube(x, w_sep, h_sep)).save("./images/rusted_brick_cube.png")
+	rust(create_brick_cylinder(x, w_sep, h_sep)).save("./images/rusted_brick_cylinder.png")
+	rust(create_brick_cube(x, w_sep, h_sep)).save("./images/rusted_brick_cube.png")
+	rust(create_staircase(x, l, fb=1,lr=1)).save("./images/rusted_staircase_rb_sprite.png")
+	rust(create_staircase(x, l, fb=-1,lr=1)).save("./images/rusted_staircase_rf_sprite.png")
+	rust(create_staircase(x, l, fb=1,lr=-1)).save("./images/rusted_staircase_lb_sprite.png")
+	rust(create_staircase(x, l, fb=-1,lr=-1)).save("./images/rusted_staircase_lf_sprite.png")

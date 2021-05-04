@@ -75,10 +75,10 @@ if __name__ == "__main__":
 	# Rusted
 	tiles = [
 		None,
-		rust(create_brick_cube(2*x+1, 2*w_sep, 2*h_sep), 2*x+1),
-		rust(create_staircase(2*x+1, 2*l, lr=1), 2*x+1),
-		rust(create_staircase(2*x+1, 2*l, lr=-1), 2*x+1),
-		rust(create_brick_cylinder(2*x+1, 2*w_sep, 2*h_sep), 2*x+1)
+		rust(create_brick_cube(2*x+1, 2*w_sep, 2*h_sep)),
+		rust(create_staircase(2*x+1, 2*l, lr=1)),
+		rust(create_staircase(2*x+1, 2*l, lr=-1)),
+		rust(create_brick_cylinder(2*x+1, 2*w_sep, 2*h_sep))
 	]
 	tile3D(axes_pattern, tiles, 2*x+1).save("./images/rusted_stairs_cube.png")
 	
@@ -114,12 +114,12 @@ if __name__ == "__main__":
 	# Rusted
 	tiles = [
 		None,
-		rust(create_brick_cube(2*x+1, 2*w_sep, 2*h_sep), 2*x+1),
-		rust(create_staircase(2*x+1, 2*l, lr=1), 2*x+1),
-		rust(create_staircase(2*x+1, 2*l, lr=-1), 2*x+1),
-			rust(create_staircase(2*x+1, 2*l, lr=1, fb=-1), 2*x+1),
-		rust(create_staircase(2*x+1, 2*l, lr=-1, fb=-1), 2*x+1),
-		rust(create_brick_cylinder(2*x+1, 2*w_sep, 2*h_sep), 2*x+1)
+		rust(create_brick_cube(2*x+1, 2*w_sep, 2*h_sep)),
+		rust(create_staircase(2*x+1, 2*l, lr=1)),
+		rust(create_staircase(2*x+1, 2*l, lr=-1)),
+			rust(create_staircase(2*x+1, 2*l, lr=1, fb=-1)),
+		rust(create_staircase(2*x+1, 2*l, lr=-1, fb=-1)),
+		rust(create_brick_cylinder(2*x+1, 2*w_sep, 2*h_sep))
 	]
 	tile3D(axes_pattern, tiles, 2*x+1).save("./images/rusted_stairs_cube2.png")
 
