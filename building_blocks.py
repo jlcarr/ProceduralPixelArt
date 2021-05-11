@@ -248,7 +248,7 @@ def create_staircase_platform(x, l, lr=1, fb=1):
 
 
 
-def create_staircase_thin(x, l, lr=1, fb=1):
+def create_staircase_thin(x, l, lr=1, fb=1, thickness=0):
 	img_h = 4 * x + 5
 	img_w = 4 * x + 5
 	image_obj = Image.new('RGBA', (img_w,img_h), color=(0,0,0,0))
@@ -269,9 +269,9 @@ def create_staircase_thin(x, l, lr=1, fb=1):
 	
 		# Front-Bottom exterior
 		if lr > 0:
-			draw_obj.line([(0, 3*x+3), (2*x+2, 4*x+4), (4*x+4, x+1)], fill=(0,0,0,255))
+			draw_obj.line([(0, 3*x+3), (2*x+2, 4*x+4), (2*x+2+2*l*thickness, 4*x+4), (4*x+4, x+1+3*l*thickness), (4*x+4, x+1)], fill=(0,0,0,255))
 		else:
-			draw_obj.line([(0, x+1), (2*x+2, 4*x+4), (4*x+4, 3*x+3)], fill=(0,0,0,255))
+			draw_obj.line([(0, x+1), (0, x+1+3*l*thickness), (2*x+2-2*l*thickness, 4*x+4), (2*x+2, 4*x+4), (4*x+4, 3*x+3)], fill=(0,0,0,255))
 
 		#Back
 		for i in range(x//l):
@@ -301,10 +301,13 @@ def create_staircase_thin(x, l, lr=1, fb=1):
 
 	if fb < 0:
 		# Front-Bottom exterior
-		draw_obj.line([((1-lr)*(2*x+2), x+1), ((1+lr)*(2*x+2), 3*x+3)][::lr], fill=(0,0,0,255))
+		draw_obj.line([((1-lr)*(2*x+2), x+1), ((1-lr)*(2*x+2), x+1+2*l*thickness), ((1+lr)*(2*x+2)-lr*2*l*thickness, 3*x+3+l*thickness), ((1+lr)*(2*x+2), 3*x+3)][::lr], fill=(0,0,0,255))
 
 		# Fill from center
 		ImageDraw.floodfill(image_obj,(2*x+2, 2*x+1), (255,255,255,255))
+	
+		#Back Top exterior
+		draw_obj.line([((1-lr)*(2*x+2), x+1), (2*x+2, 2*x+2), (2*x+2, 2*x+2 +2*l*thickness)][::lr], fill=(0,0,0,255))
 
 	# Convex edge, final step
 	draw_obj.line([(x_back + fb*lr*2*l*(i_final+1), (1-fb)*(x+1)/2 + fb*remainder), (x_front + fb*lr*2*l*(i_final+1), (3-fb)*(x+1)/2 + fb*remainder)][::lr], fill=(0,0,0,255)) #(2*x+2 - lr*(1-fb)*(x+1), (1-fb)*(x+1)/2)
