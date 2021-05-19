@@ -15,7 +15,6 @@ def create_stick(s, step=-1, orientation=0):
 	image_obj = Image.new('RGBA',(img_w,img_h),color=(0,0,0,0))
 	draw_obj = ImageDraw.Draw(image_obj)
 	
-	peak = project_to_pixel(s, 0, 0.85, 0, y_rot=orientation)
 	#head
 	head = project_to_pixel(s, 0, 0.85, 0, y_rot=orientation)
 	r = int(0.15*(s+1))
