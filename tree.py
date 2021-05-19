@@ -14,14 +14,23 @@ def create_tree(s):
 	"""
 	img_h = 4 * s + 5
 	img_w = 4 * s + 5
-	image_obj = Image.new('RGBA',(img_w,img_h),color=(0,0,0,0))
+	image_obj = Image.new('RGBA', (img_w,img_h), color=(0,0,0,0))
 	draw_obj = ImageDraw.Draw(image_obj)
 	
 	L = {
 		"X": "F+[[X]-X]-F[-FX]+X",
 		"F": "FF"
 	}
-	step_length = s/8
+	L = {
+		"F": "FF-[-F+F+F]+[+F-F-F]",
+	}
+	L = {
+		"T": "FT-[L]+++[R]--",
+		"R": "F-[FL]+++[R]--",
+		"L": "F+[FR]--[L]+",
+	}
+
+	step_length = s/6
 	
 	def rewrite_L_system(axiom, steps):
 		instructions = L[axiom]
@@ -33,13 +42,14 @@ def create_tree(s):
 				new_instructions += c
 		return new_instructions
 		
-	instructions = rewrite_L_system("X", 2)
+	instructions = rewrite_L_system("T", 6)
 	print(instructions)
 	
 	# Draw the instructions
+	turning_angle = np.radians(20)
 	state_stack = []
-	pos = (2*s+2, 2*s+2)
-	angle = -np.radians(90-25)
+	pos = (2*s+2, 4*s+4)
+	angle = -np.radians(90)
 
 	for c in instructions:
 		if c == "F":
@@ -49,9 +59,9 @@ def create_tree(s):
 			draw_obj.line([pos, new_pos], fill=(0,0,0,255))
 			pos = new_pos
 		elif c == "+":
-			angle -= np.radians(25)
+			angle += turning_angle
 		elif c == "-":
-			angle += np.radians(25)
+			angle -= turning_angle
 		elif c == "[":
 			state_stack.append((pos, angle))
 		elif c == "]":
