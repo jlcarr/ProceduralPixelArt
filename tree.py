@@ -1,6 +1,32 @@
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageOps
 import numpy as np
 from primitives import *
+
+
+def leaf(s, orientation=0):
+	img_h = s//8
+	img_w = s//8
+	image_obj = Image.new('RGBA', (img_w,img_h), color=(0,0,0,0))
+	draw_obj = ImageDraw.Draw(image_obj)
+	
+	print(img_h,img_w)
+	ang = np.radians(30)
+	
+	bresenham_ellipse(image_obj, (img_w//2, img_h//2), (img_w/2, img_h/4), orientation)
+	#bresenham_ellipse(image_obj, (img_w//2, img_h//2), (img_w/2, img_h/4), np.pi/2+ang, angle_max = 2*np.pi-ang, angle_min = np.pi-ang)
+	#bresenham_ellipse(image_obj, (img_w//2, img_h//2), (img_w/2, img_h/4), np.pi/2-ang, angle_max = np.pi+ang, angle_min = ang)
+	
+	
+	#bresenham_ellipse(image_obj, (img_w//2, img_h//2), (img_w/2, 3*img_h/8), 0)
+	#bresenham_ellipse(image_obj, (img_w//2, img_h//2), (img_w/2, 3*img_h/8), np.pi/2-ang, angle_max = np.pi+ang, angle_min = ang)
+	#flip = ImageOps.mirror(image_obj)
+	#image_obj.paste(flip, (0,0), mask=flip)
+	ImageDraw.floodfill(image_obj,(img_w//2, img_h//2), (255,255,255,255))
+	
+	#brick_staggered.paste(brick_grid, ((w_sep+1)//2, 0), mask=brick_grid)
+	del draw_obj
+	return image_obj
+
 
 
 def create_tree(s, steps=6):
@@ -49,7 +75,7 @@ def create_tree(s, steps=6):
 	state_stack = []
 	pos = (2*s+2, 4*s+4)
 	angle = -np.radians(90)
-	width = 4
+	width = s/10
 	dwidth = width/steps/2/1.5
 
 	for c in instructions:
@@ -70,8 +96,15 @@ def create_tree(s, steps=6):
 			new_pos_r = (new_pos[0]-dx, new_pos[1]-dy)
 
 			#draw_obj.line([pos, new_pos], fill=(0,0,0,255))
-			draw_obj.polygon([pos_r, pos_l, new_pos_l, new_pos_r], fill=(0,0,0,255))
+			draw_obj.polygon([pos_r, pos_l, new_pos_l, new_pos_r], fill=(255,255,255,255))
+			draw_obj.line([pos_r, new_pos_r], fill=(0,0,0,255))
+			draw_obj.line([pos_l, new_pos_l], fill=(0,0,0,255))
+			
 			pos = new_pos
+			
+			if width < 4*dwidth:
+				leafer = leaf(s, orientation=-angle)
+				image_obj.paste(leafer, (int(pos[0] - s/16), int(pos[1] - s/16)), mask=leafer)
 		elif c == "+":
 			angle += turning_angle
 		elif c == "-":
@@ -91,4 +124,6 @@ if __name__ == "__main__":
 	#l=4
 	s = 50
 	create_tree(s).save('./images/tree.png')
+
+	leaf(s).save('./images/leaf.png')
 
