@@ -1,5 +1,6 @@
 from PIL import Image, ImageDraw
 from primitives import *
+import numpy as np
 
 
 def draw_marker(s):
@@ -19,7 +20,45 @@ def draw_marker(s):
 	del draw_obj
 	return image_obj
 
+def draw_moon(s, phase=4):
+	img_h = 4 * s + 5
+	img_w = 4 * s + 5
+	image_obj = Image.new('RGBA', (img_w,img_h), color=(0,0,0,0))
+	draw_obj = ImageDraw.Draw(image_obj)	
+
+	curve = (img_w-1) * (4 - phase%4) // 4
+	curve_dist = int(np.abs(2*s+2-curve))
+	curve_rot = np.pi/2 + np.pi*float(phase%4==1)
+	fill = curve//2 if phase < 4 else (img_w-1+curve)//2
+
+	bresenham_ellipse(image_obj, (2*s+2, 2*s+2), (2*s+2, 2*s+2), 0)
+	ImageDraw.floodfill(image_obj,(2*s+2, 2*s+2), (255,255,255,255))
+	
+	if curve_dist > 0:
+		bresenham_ellipse(image_obj, (2*s+2, 2*s+2), (2*s+2, curve_dist), curve_rot, angle_max=np.pi)
+	else:
+		draw_obj.line([(2*s+2, 0), (2*s+2, 4*s+4)], fill=(0,0,0,255))
+	ImageDraw.floodfill(image_obj,(fill, 2*s+2), (0,0,0,255))
+
+	#if curve_dist > 0:
+	#	bresenham_ellipse(image_obj, (2*s+2, 2*s+2), (2*s+2, curve_dist), curve_rot, angle_max=np.pi, color=(255,255,255,255))
+	#bresenham_ellipse(image_obj, (2*s+2, 2*s+2), (2*s+2, 2*s+2), 0)
+
+	del draw_obj
+	return image_obj
+	
 
 if __name__ == "__main__":
 	s = 9
 	draw_marker(s).save("./images/marker.png")
+	draw_moon(s//2, phase=1).save("./images/moon.png")
+
+	size = 4*s+5
+	anim_frames = []
+	for phase in range(8):
+		frame = draw_moon(s, phase=phase)
+		canvas = Image.new(mode='RGBA',size=(size,size), color=(255,255,255,0))
+		canvas.paste(frame, (0,0), mask=frame)
+		anim_frames.append(canvas)
+	anim_frames[0].save(fp='./images/moon_phases.gif', format='GIF', append_images=anim_frames[1:], save_all=True, duration=200, loop=0)
+
