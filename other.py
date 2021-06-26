@@ -46,12 +46,30 @@ def draw_moon(s, phase=4):
 
 	del draw_obj
 	return image_obj
-	
+
+
+def draw_sound_icon(s):
+	img_h = 4 * s + 5
+	img_w = 4 * s + 5
+	image_obj = Image.new('RGBA', (img_w,img_h), color=(0,0,0,0))
+	draw_obj = ImageDraw.Draw(image_obj)
+
+	half = (s+1)//2
+	draw_obj.polygon([(2*s+2,s+1), (2*s+2, 3*s+3), (2*s+2-half,3*s+3-half), (2*s+2-half,s+1+half)], outline='black', fill='black')
+	draw_obj.rectangle([(s+1,s+1+half), (2*s+2-half,3*s+3-half)], outline='black', fill='black')
+
+	bresenham_ellipse(image_obj, (2*s+2, 2*s+2), (s+1, s+1), -np.pi/2, angle_min=np.pi/4, angle_max=3*np.pi/4)
+	bresenham_ellipse(image_obj, (2*s+2, 2*s+2), (half, half), -np.pi/2, angle_min=np.pi/4, angle_max=3*np.pi/4)
+	bresenham_ellipse(image_obj, (2*s+2, 2*s+2), (s+1+half, s+1+half), -np.pi/2, angle_min=np.pi/4, angle_max=3*np.pi/4)
+
+	del draw_obj
+	return image_obj
 
 if __name__ == "__main__":
 	s = 9
 	draw_marker(s).save("./images/marker.png")
-	draw_moon(s//2, phase=1).save("./images/moon.png")
+	draw_moon(s//2, phase=2).save("./images/moon.png")
+	draw_sound_icon(s).save("./images/sound_icon.png")
 
 	size = 4*s+5
 	anim_frames = []
