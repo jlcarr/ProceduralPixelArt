@@ -259,3 +259,25 @@ if __name__ == "__main__":
 		create_brick_cylinder(x, w_sep, h_sep)
 	]
 	tile3D(hollow_pattern, tiles, x).save("./images/hollow_brick.png")
+
+	s=9
+	l=2
+	tiles = [
+		None,
+		create_platform(x, l),	
+		create_sphere(x)
+	]
+	IsoMAZEtric_layout = np.array([
+		[
+			[1]
+		],
+		[
+			[2]
+		]
+	])
+	icon = tile3D(IsoMAZEtric_layout, tiles, s)
+	w_offset = (64-icon.size[0])//2 + 1
+	h_offset = (64-icon.size[1])//2 + 1
+	canvas = Image.new('RGBA', (64,64), color=(0,0,0,0))
+	canvas.paste(icon, (w_offset, h_offset))
+	canvas.save("./images/IsoMAZEtric_icon.png")
