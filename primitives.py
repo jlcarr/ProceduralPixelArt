@@ -30,6 +30,16 @@ def bresenham_ellipse(image_obj, mid_xy, ab, theta, angle_max = 2*np.pi, angle_m
 	
 	This particular implementation is adapted from the uses the pseudocode from DaSilva's master's thesis.
 	"""
+
+	def put_pixel_arc(image_obj, x,y, mid_x,mid_y,  theta, color):
+		current_angle = np.arctan2(y, x) - theta
+		current_angle = current_angle if current_angle >= 0 else current_angle + 2 * np.pi
+		current_angle = 2 * np.pi - current_angle
+		if (current_angle >= angle_min) and (current_angle <= angle_max):
+			try:
+				image_obj.putpixel((x + mid_x, y + mid_y), color)
+			except:
+				pass
 	
 	mid_x, mid_y = mid_xy
 	a,b = ab
@@ -124,22 +134,8 @@ def bresenham_ellipse(image_obj, mid_xy, ab, theta, angle_max = 2*np.pi, angle_m
 	# region 1
 	while y < YR:
 		#print("reg1: x,y",x,y)
-		current_angle = np.arctan2(y, x) - theta
-		current_angle = current_angle if current_angle >= 0 else current_angle + 2 * np.pi
-		current_angle = 2 * np.pi - current_angle
-		if (current_angle >= angle_min) and (current_angle <= angle_max):
-			try:
-				image_obj.putpixel((x + mid_x, y + mid_y), color)
-			except:
-				pass
-		current_angle = np.arctan2(-y, -x) - theta
-		current_angle = current_angle if current_angle >= 0 else current_angle + 2 * np.pi
-		current_angle = 2 * np.pi - current_angle
-		if (current_angle >= angle_min) and (current_angle <= angle_max):
-			try:
-				image_obj.putpixel((-x + mid_x, -y + mid_y), color)
-			except:
-				pass
+		put_pixel_arc(image_obj, x,y, mid_x,mid_y,  theta, color)
+		put_pixel_arc(image_obj, -x,-y, mid_x,mid_y,  theta, color)
 		y += 1
 		if (d1  < 0 ) or (Fn - Fnw < cross1):
 			d1 += Fn
@@ -158,22 +154,8 @@ def bresenham_ellipse(image_obj, mid_xy, ab, theta, angle_max = 2*np.pi, angle_m
 	d2 = d1 + (Fw - Fn + C)/2 + (A + C)/4 - A
 	while x > XH:
 		#print("reg2: x,y",x,y)
-		current_angle = np.arctan2(y, x) - theta
-		current_angle = current_angle if current_angle >= 0 else current_angle + 2 * np.pi
-		current_angle = 2 * np.pi - current_angle
-		if (current_angle >= angle_min) and (current_angle <= angle_max):
-			try:
-				image_obj.putpixel((x + mid_x, y + mid_y), color)
-			except:
-				pass
-		current_angle = np.arctan2(-y, -x) - theta
-		current_angle = current_angle if current_angle >= 0 else current_angle + 2 * np.pi
-		current_angle = 2 * np.pi - current_angle
-		if (current_angle >= angle_min) and (current_angle <= angle_max):
-			try:
-				image_obj.putpixel((-x + mid_x, -y + mid_y), color)
-			except:
-				pass
+		put_pixel_arc(image_obj, x,y, mid_x,mid_y,  theta, color)
+		put_pixel_arc(image_obj, -x,-y, mid_x,mid_y,  theta, color)
 		x -= 1
 		if (d2  < 0 ) or (Fnw - Fw < cross2):
 			y += 1
@@ -191,22 +173,8 @@ def bresenham_ellipse(image_obj, mid_xy, ab, theta, angle_max = 2*np.pi, angle_m
 	Fsw = Fw - Fnw + Fw + 2*C + 2*C - B
 	while x > XL:
 		#print("reg3: x,y",x,y)
-		current_angle = np.arctan2(y, x) - theta
-		current_angle = current_angle if current_angle >= 0 else current_angle + 2 * np.pi
-		current_angle = 2 * np.pi - current_angle
-		if (current_angle >= angle_min) and (current_angle <= angle_max):
-			try:
-				image_obj.putpixel((x + mid_x, y + mid_y), color)
-			except:
-				pass
-		current_angle = np.arctan2(-y, -x) - theta
-		current_angle = current_angle if current_angle >= 0 else current_angle + 2 * np.pi
-		current_angle = 2 * np.pi - current_angle
-		if (current_angle >= angle_min) and (current_angle <= angle_max):
-			try:
-				image_obj.putpixel((-x + mid_x, -y + mid_y), color)
-			except:
-				pass
+		put_pixel_arc(image_obj, x,y, mid_x,mid_y,  theta, color)
+		put_pixel_arc(image_obj, -x,-y, mid_x,mid_y,  theta, color)
 		x -= 1
 		if (d3  < 0 ) or (Fsw - Fw > cross3):
 			d3 += Fw
@@ -226,22 +194,8 @@ def bresenham_ellipse(image_obj, mid_xy, ab, theta, angle_max = 2*np.pi, angle_m
 	YV = - YV
 	while y > YV:
 		#print("reg4: x,y",x,y)
-		current_angle = np.arctan2(y, x) - theta
-		current_angle = current_angle if current_angle >= 0 else current_angle + 2 * np.pi
-		current_angle = 2 * np.pi - current_angle
-		if (current_angle >= angle_min) and (current_angle <= angle_max):
-			try:
-				image_obj.putpixel((x + mid_x, y + mid_y), color)
-			except:
-				pass
-		current_angle = np.arctan2(-y, -x) - theta
-		current_angle = current_angle if current_angle >= 0 else current_angle + 2 * np.pi
-		current_angle = 2 * np.pi - current_angle
-		if (current_angle >= angle_min) and (current_angle <= angle_max):
-			try:
-				image_obj.putpixel((-x + mid_x, -y + mid_y), color)
-			except:
-				pass
+		put_pixel_arc(image_obj, x,y, mid_x,mid_y,  theta, color)
+		put_pixel_arc(image_obj, -x,-y, mid_x,mid_y,  theta, color)
 		y -= 1
 		if (d4  < 0 ) or (Fsw - Fs < cross4):
 			x -= 1
@@ -252,11 +206,8 @@ def bresenham_ellipse(image_obj, mid_xy, ab, theta, angle_max = 2*np.pi, angle_m
 			d4 += Fs
 			Fs += Fs_s
 			Fsw += Fsw_s
-	try:
-		image_obj.putpixel((x + mid_x, y + mid_y), color)
-		image_obj.putpixel((-x + mid_x, -y + mid_y), color)
-	except:
-		pass
+	put_pixel_arc(image_obj, x,y, mid_x,mid_y,  theta, color)
+	put_pixel_arc(image_obj, -x,-y, mid_x,mid_y,  theta, color)
 	return image_obj
 
 

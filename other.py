@@ -87,7 +87,7 @@ if __name__ == "__main__":
 	s = 9
 	size = 4*s+5
 	draw_marker(s).save("./images/marker.png")
-	draw_moon(s//2, phase=2).save("./images/moon.png")
+	draw_moon(s//2, phase=1).save("./images/moon.png")
 	draw_sound_icon(s//2).save("./images/sound_icon.png")
 	add_prohibition_sign(s//2, draw_sound_icon(s//2)).save("./images/sound_off_icon.png")
 
