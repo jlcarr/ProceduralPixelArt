@@ -262,7 +262,7 @@ def bresenham_ellipse(image_obj, mid_xy, ab, theta, angle_max = 2*np.pi, angle_m
 
 
 
-def add_frame(image_obj,x):
+def add_frame(x, image_obj):
 	"""Adds a cubic frame on top of a PIL Image object. Useful for debugging.
 	"""
 	draw_obj = ImageDraw.Draw(image_obj)
@@ -279,6 +279,8 @@ def add_frame(image_obj,x):
 
 
 def create_cube(x):
+	"""Creates a basic cube.
+	"""
 	# choose x as length
 	# top face is 4*x+3 high and 4*x+5 wide
 	# total cube is now 4*x+5 high and 4*x+5 wide
@@ -339,6 +341,6 @@ if __name__ == "__main__":
 	l = 2
 	create_cube(x).save("./images/test_cube.png")
 	create_cylinder(x).save("./images/test_cylinder.png")
-	add_frame(create_cylinder(x), x).save("./images/test_cylinder_frame.png")
+	add_frame(x, create_cylinder(x)).save("./images/test_cylinder_frame.png")
 	create_sphere(x).save("./images/test_sphere.png")
-	add_frame(create_sphere(x), x).save("./images/test_sphere_frame.png")
+	add_frame(x, create_sphere(x)).save("./images/test_sphere_frame.png")
