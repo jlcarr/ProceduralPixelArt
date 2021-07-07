@@ -231,6 +231,8 @@ def add_frame(x, image_obj):
 
 def create_cube(x):
 	"""Creates a basic cube.
+
+	Vertical side length is 2*x+2
 	"""
 	# choose x as length
 	# top face is 4*x+3 high and 4*x+5 wide
@@ -257,6 +259,10 @@ def create_cube(x):
 
 
 def create_cylinder(x):
+	"""Creates a cylinder standing vertically. 
+
+	Size is bounded by the basic cube: Height is 2*x+2, diameter is same as height.
+	"""
 	img_h = 4 * x + 5
 	img_w = 4 * x + 5
 	image_obj = Image.new('RGBA', (img_w,img_h), color=(0,0,0,0))
@@ -276,6 +282,10 @@ def create_cylinder(x):
 
 
 def create_sphere(x):
+	"""Creates a sphere by drawing a circle: projection stretch is neglected for aesthetics over accuracy.
+
+	Size is bounded by the basic cube: vertical radius is 2*x+2.
+	"""
 	img_h = 4 * x + 5
 	img_w = 4 * x + 5
 	image_obj = Image.new('RGBA', (img_w,img_h), color=(0,0,0,0))
