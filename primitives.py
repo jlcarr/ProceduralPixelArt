@@ -3,6 +3,7 @@
 
 from PIL import Image, ImageDraw
 import numpy as np
+from scipy.special import comb
 
 
 def project_to_pixel(x, x_coord, y_coord, z_coord, y_rot=0):
@@ -44,7 +45,7 @@ def bresenham_ellipse(image_obj, mid_xy, ab, theta, angle_max = 2*np.pi, angle_m
 	mid_x, mid_y = mid_xy
 	a,b = ab
 	a,b = float(a),float(b)
-	theta = -float(theta)
+	theta = -float(theta % np.pi)
 	aSq = a*a
 	# focal point
 	c = np.sqrt(a*a - b*b)
@@ -211,6 +212,16 @@ def bresenham_ellipse(image_obj, mid_xy, ab, theta, angle_max = 2*np.pi, angle_m
 	return image_obj
 
 
+def bezier(image_obj, Ps):
+	def b_eval(Ps, t):
+		n = len(Ps)-1
+		Ps = [np.array(p) for p in Ps]
+		return sum([comb(n,i) * (1-t)**(n-i) * t**i * Ps[i] for i in range(n+1)])
+
+	for i in range(1000):
+		image_obj.putpixel(b_eval(Ps, i/1000).astype(int), (0,0,0,255))
+	return image_obj
+
 
 
 def add_frame(x, image_obj):
@@ -305,3 +316,16 @@ if __name__ == "__main__":
 	add_frame(x, create_cylinder(x)).save("./images/test_cylinder_frame.png")
 	create_sphere(x).save("./images/test_sphere.png")
 	add_frame(x, create_sphere(x)).save("./images/test_sphere_frame.png")
+
+	img_h = 4*x+5
+	img = Image.new('RGBA', (img_h,img_h), color=(0,0,0,0))
+	bezier(img, [(0,img_h-1),(0,1-img_h),(img_h-1,2*img_h-2),(img_h-1,0)]).save("./images/bezier.png")
+
+	size = 4*x+5
+	n = 100
+	anim_frames = []
+	for i in range(n):
+		canvas = Image.new(mode='RGBA',size=(size,size), color='white')
+		bresenham_ellipse(canvas, (size//2,size//2), (size//2, size//4), 2*np.pi*i/n)
+		anim_frames.append(canvas)
+	anim_frames[0].save(fp='./images/rot.gif', format='GIF', append_images=anim_frames[1:], save_all=True, duration=200, loop=0)
