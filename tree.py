@@ -6,14 +6,23 @@ from primitives import *
 
 
 def leaf(s, orientation=0):
-	img_h = s//8
-	img_w = s//8
+	img_h = s//8+2
+	img_w = s//8+2
 	image_obj = Image.new('RGBA', (img_w,img_h), color=(0,0,0,0))
 	draw_obj = ImageDraw.Draw(image_obj)
 	
 	ang = np.radians(30)
 	
-	bresenham_ellipse(image_obj, (img_w//2, img_h//2), (img_w/2, img_h/4), orientation)
+	#bresenham_ellipse(image_obj, (img_w//2, img_h//2), (img_w/2, img_h/4), orientation)
+	
+	mid_xy = (img_w//2, img_h//2)
+	ab = (img_w/2, img_h/4)
+	#para_set = ellipse_parametric(mid_xy, ab)
+	#para_set = rot_parametric(*para_set, orientation, mid_xy)
+	#bresenham_parametric(image_obj, *para_set)
+	bresenham_parametric(image_obj, *rot_parametric(*ellipse_parametric(mid_xy, ab), orientation, mid_xy))
+	
+	
 	#bresenham_ellipse(image_obj, (img_w//2, img_h//2), (img_w/2, img_h/4), np.pi/2+ang, angle_max = 2*np.pi-ang, angle_min = np.pi-ang)
 	#bresenham_ellipse(image_obj, (img_w//2, img_h//2), (img_w/2, img_h/4), np.pi/2-ang, angle_max = np.pi+ang, angle_min = ang)
 	
@@ -97,7 +106,7 @@ def create_L_tree(s, steps=6):
 	state_stack = []
 	pos = (2*s+2, 4*s+4)
 	angle = -np.radians(90)
-	max_width = s/10
+	max_width = s/6
 	dwidth = max_width/steps/2/1.5
 
 
@@ -155,6 +164,7 @@ def create_L_tree(s, steps=6):
 if __name__ == "__main__":
 	#s = 120
 	#l=4
-	s = 50
+	s = 9*5
+	#leaf(s, orientation=np.pi/8).save("./images/leaf.png")
 	create_L_tree(s).save('./images/L-tree.png')
 

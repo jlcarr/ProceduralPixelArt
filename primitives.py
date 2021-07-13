@@ -3,7 +3,7 @@
 
 from PIL import Image, ImageDraw
 import numpy as np
-from scipy.special import comb
+from scipy.special import comb, factorial
 
 
 def project_to_pixel(x, x_coord, y_coord, z_coord, y_rot=0):
@@ -212,16 +212,124 @@ def bresenham_ellipse(image_obj, mid_xy, ab, theta, angle_max = 2*np.pi, angle_m
 	return image_obj
 
 
-def bezier(image_obj, Ps):
-	def b_eval(Ps, t):
-		n = len(Ps)-1
-		Ps = [np.array(p) for p in Ps]
-		return sum([comb(n,i) * (1-t)**(n-i) * t**i * Ps[i] for i in range(n+1)])
+def bresenham_parametric(image_obj, f, df, xsol, ysol, color=(0,0,0,255)):
+	draw_obj = ImageDraw.Draw(image_obj)
 
-	for i in range(1000):
-		image_obj.putpixel(b_eval(Ps, i/1000).astype(int), (0,0,0,255))
+	t = 0
+	dt = 0.01 # epsilon to init, shouldn't be needed
+
+	x_prev,y_prev = f(t)
+	x_prev = np.ceil(x_prev) if x_prev-np.floor(x_prev) == 0.5 else x_prev
+	y_prev = np.ceil(y_prev) if y_prev-np.floor(y_prev) == 0.5 else y_prev
+	x_prev,y_prev = round(x_prev),round(y_prev)
+
+	while t <= 1:
+		x,y = f(t)
+		dx,dy = df(t)
+		#print("\nstart")
+		#print("t,x,y= ", t,x,y)
+		#print("dx,dy= ", dx,dy)
+		x = np.ceil(x) if x-np.floor(x) == 0.5 else x
+		y = np.ceil(y) if y-np.floor(y) == 0.5 else y
+		x,y = round(x),round(y)
+		if 0 <= x < image_obj.size[0] and 0 <= y < image_obj.size[1]:
+			draw_obj.line([(x_prev,y_prev),(x,y)], fill=color)
+			#image_obj.putpixel((x,y), color)
+			#print("putpixel=",x,y)
+		x_prev,y_prev = x,y
+		if np.abs(dx) >= np.abs(dy):
+			x += 1 if dx > 0  else -1
+			t_new = xsol(x,t)
+		else:
+			y += 1 if dy > 0  else -1
+			t_new = ysol(y,t)
+		#print("t_new,x,y=",t_new,x,y)
+		if not t_new or np.isnan(t_new) or t_new <= t:
+			t_new = t + dt
+		dt = t_new - t
+		t = t_new
 	return image_obj
 
+
+def bezier_parametric(Ps):
+	n = len(Ps)-1
+	Ps = [np.array(p) for p in Ps]
+	coeffs = [factorial(n)/factorial(n-i) * sum([(-1)**(i+j)*Ps[j]/factorial(j)/factorial(i-j) for j in range(i+1)]) for i in range(n+1)]
+	xpoly = np.polynomial.Polynomial([c[0] for c in coeffs])
+	ypoly = np.polynomial.Polynomial([c[1] for c in coeffs])
+
+	f = lambda t: sum([coeffs[i] * t**i for i in range(n+1)])
+	df = lambda t: sum([(i+1)*coeffs[i+1] * t**i for i in range(n)])
+	def parapolysol(x,t0, spoly):
+		poly = spoly.copy()
+		poly.coef[0] -= x
+		sol = poly.roots()
+		#print(sol)
+		sol = sol[np.isreal(sol)].astype(np.float)
+		if not sol.size:
+			return None
+		return sol[np.argmin(np.abs(sol-t0))]
+	xsol = lambda x,t0: parapolysol(x,t0,xpoly)
+	ysol = lambda y,t0: parapolysol(y,t0,ypoly)
+	return f,df,xsol,ysol
+
+
+def ellipse_parametric(mid_xy, ab, angle_max = 2*np.pi, angle_min = 0):
+	mid_x,mid_y = mid_xy
+	a,b = ab
+
+	angle = angle_max - angle_min
+	angle_start = angle_min
+
+	f = lambda t: (a*np.cos(angle*t + angle_start) + mid_x, b*np.sin(angle*t + angle_start) + mid_y)
+	df = lambda t: (-a*angle*np.sin(angle*t + angle_start), b*angle*np.cos(angle*t + angle_start))
+	def xsol(x,t0): 
+		angle_t0 = (angle*t0+angle_start) % (2*np.pi)
+		angle_sol = np.arccos((x-mid_x)/a)
+		angle_sol *= 1 if angle_t0 < np.pi else -1
+		sol = ((angle_sol - angle_start) % (2*np.pi)) / angle
+		return sol
+	def ysol(y,t0): 
+		angle_t0 = (angle*t0+angle_start) % (2*np.pi)
+		angle_sol = np.arcsin((y-mid_y)/b)
+		angle_sol = np.pi-angle_sol if 3*np.pi/2 > angle_t0 >= np.pi/2 else angle_sol
+		sol = ((angle_sol - angle_start) % (2*np.pi)) / angle
+		return sol
+	return f,df,xsol,ysol
+
+
+def rot_parametric(f,df,xsol,ysol, theta, mid_xy):
+	rotation_matrix = np.array([
+		[np.cos(theta), -np.sin(theta)],
+		[np.sin(theta), np.cos(theta)]
+	])
+	rot_offset = -rotation_matrix.dot(mid_xy) + mid_xy
+	inv_rotation_matrix = np.linalg.inv(rotation_matrix)
+	unrot_offset = -inv_rotation_matrix.dot(mid_xy) + mid_xy
+
+	f_rot = lambda t: tuple(rotation_matrix.dot(f(t)) + rot_offset)
+	df_rot = lambda t: tuple(rotation_matrix.dot(df(t))) # commutativity of differentials
+	def xsol_rot(x,t):
+		xp,yp = f_rot(t)
+		dxp,dyp = df_rot(t)
+		y = yp + (x-xp)*dyp/dxp
+		x_unrot,y_unrot = tuple(inv_rotation_matrix.dot((x,y)) + unrot_offset)
+		if np.abs(np.cos(theta)) > np.abs(np.sin(theta)):
+			t = xsol(x_unrot,t)
+		else:
+			t = ysol(y_unrot,t)
+		return t
+	def ysol_rot(y,t):
+		xp,yp = f_rot(t)
+		dxp,dyp = df_rot(t)
+		x = xp + (y-yp)*dxp/dyp
+		x_unrot,y_unrot = tuple(inv_rotation_matrix.dot((x,y)) + unrot_offset)
+		if np.abs(np.cos(theta)) > np.abs(np.sin(theta)):
+			t = ysol(y_unrot,t)
+		else:
+			t = xsol(x_unrot,t)
+		return t
+	return f_rot,df_rot,xsol_rot,ysol_rot
 
 
 def add_frame(x, image_obj):
@@ -236,8 +344,6 @@ def add_frame(x, image_obj):
 	draw_obj.line([(2*x+2, 2*x+2), (2*x+2, 4*x+4)], fill=(0,0,0,255))
 	del draw_obj
 	return image_obj
-
-
 
 
 def create_cube(x):
@@ -267,8 +373,6 @@ def create_cube(x):
 	return image_obj
 
 
-
-
 def create_cylinder(x):
 	"""Creates a cylinder standing vertically. 
 
@@ -288,8 +392,6 @@ def create_cylinder(x):
 	ImageDraw.floodfill(image_obj,(2*x+2, x+1), (255,255,255,255)) #top
 	ImageDraw.floodfill(image_obj,(2*x+2, 3*x+3), (255,255,255,255)) #side
 	return image_obj
-
-
 
 
 def create_sphere(x):
@@ -317,15 +419,33 @@ if __name__ == "__main__":
 	create_sphere(x).save("./images/test_sphere.png")
 	add_frame(x, create_sphere(x)).save("./images/test_sphere_frame.png")
 
-	img_h = 4*x+5
-	img = Image.new('RGBA', (img_h,img_h), color=(0,0,0,0))
-	bezier(img, [(0,img_h-1),(0,1-img_h),(img_h-1,2*img_h-2),(img_h-1,0)]).save("./images/bezier.png")
-
 	size = 4*x+5
+
+	img = Image.new('RGBA', (size,size), color=(0,0,0,0))
+	f,df,xsol,ysol = ellipse_parametric((size//2,size//2), (size//2, size//4)) #, angle_min=np.pi/2, angle_max=3*np.pi/2)
+	f,df,xsol,ysol = rot_parametric(f,df,xsol,ysol, theta=np.pi*6/50, mid_xy=(size//2,size//2))
+	bresenham_parametric(img, f, df, xsol, ysol)
+	img.save("./images/para_ellipse.png")
+
+	Ps = [(0,0),(2*size-2,size-1),(1-size,size-1),(size-1,0)]
+
+	img = Image.new('RGBA', (size,size), color=(0,0,0,0))
+	f = lambda t: (10*t, 20*t+5)
+	df = lambda t: (10,20)
+	ysol = lambda y,t0: (y-5)/20
+	xsol = lambda x,t0: x/10
+	f,df,xsol,ysol = bezier_parametric(Ps)
+	bresenham_parametric(img, f, df, xsol, ysol).save("./images/bezier.png")
+
 	n = 100
 	anim_frames = []
 	for i in range(n):
 		canvas = Image.new(mode='RGBA',size=(size,size), color='white')
-		bresenham_ellipse(canvas, (size//2,size//2), (size//2, size//4), 2*np.pi*i/n)
+		#bresenham_ellipse(canvas, (size//2,size//2), (size//2, size//4), 2*np.pi*i/n)
+		para_set = ellipse_parametric((size//2,size//2), (size//2, size//4))
+		#para_set = bezier_parametric(Ps)
+		para_set = rot_parametric(*para_set, theta=2*np.pi*i/n, mid_xy=(size//2,size//2))
+		bresenham_parametric(canvas, *para_set)
 		anim_frames.append(canvas)
 	anim_frames[0].save(fp='./images/rot.gif', format='GIF', append_images=anim_frames[1:], save_all=True, duration=200, loop=0)
+
