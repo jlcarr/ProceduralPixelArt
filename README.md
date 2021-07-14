@@ -16,6 +16,7 @@ The nullspace of which is:
 
 Which makes logical sense. 
 
+
 ### Included Generators
 #### Primitives
 - Project a point from clipspace to screenspace `project_to_pixel`
@@ -38,6 +39,7 @@ Which makes logical sense.
 - `Tile2D`
 - `Tile3D`
 
+
 ### Math and Parameters
 - **x**/**s**: Base measurement.
    - Total image will be `4*x+5` high and `4*x+5` wide
@@ -57,11 +59,29 @@ Which makes logical sense.
 Makes 41x41 images.
 
 
+### Bresenham's algorithm (approx variant)
+Included in this project is a small framework for drawing parametrically define curves.
+
+The idea behind the algorithm is given a continuous (somewhat smooth) parametric curve one can trace it pixel by pixel using the following information:
+- `f(t)`: The evaluation of the parametric function at a given `t`, giving coordinates `x,y`
+- `df(t)`: The evaluation of the derivative with respect to `t` at a given `t`, giving the velocity `dx,dy`
+- `xsol(x,t)`: The inverse of the function for the x-coordinates, given an `x` will find a solution `t` closest to the given `t`
+- `ysol(y,t)`: The inverse of the function for the y-coordinates, given an `y` will find a solution `t` closest to the given `t`
+
+
 ## Resources
 ### Pixel Art Drawing
+#### General
 - https://en.wikipedia.org/wiki/Raster_graphics
+#### Bresenham's Algorithm
+- https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
 - https://en.wikipedia.org/wiki/Midpoint_circle_algorithm
 - https://cs.brown.edu/research/pubs/theses/masters/1989/dasilva.pdf
+- http://members.chello.at/~easyfilter/Bresenham.pdf
+- http://members.chello.at/~easyfilter/bresenham.html
+#### Bezier Curves
+- https://en.wikipedia.org/wiki/Bernstein_polynomial
+- https://en.wikipedia.org/wiki/B%C3%A9zier_curve
 ### Python Imaging Library (PIL)
 - https://pillow.readthedocs.io/en/stable/index.html
 - https://pillow.readthedocs.io/en/stable/reference/ImageDraw.html
