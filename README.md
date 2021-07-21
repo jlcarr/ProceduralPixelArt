@@ -68,6 +68,13 @@ The idea behind the algorithm is given a continuous (somewhat smooth) parametric
 - `xsol(x,t)`: The inverse of the function for the x-coordinates, given an `x` will find a solution `t` closest to the given `t`
 - `ysol(y,t)`: The inverse of the function for the y-coordinates, given an `y` will find a solution `t` closest to the given `t`
 
+#### Rotations
+Given the above functions required to draw a parametric curve with Bresenham's algorith, we can derived a technique to rotate the parametric curve in the xy-plane.  
+Here are how we generate all of the rotated functions:
+- `f(t)`: Apply the rotation matrix
+- `df(t)`: Apply the rotation matrix (because the matrix is constant with respect to `t` it will commute with the differential operator)
+- `xsol(x,t)`: Use a linear approximation to get an approximation of `y`, then apply the inverse rotation matrix to get the unrotated coordinates, then use the original `xsol`
+- `xsol(x,t)`: Use a linear approximation to get an approximation of `x`, then apply the inverse rotation matrix to get the unrotated coordinates, then use the original `ysol`
 
 ## Resources
 ### Pixel Art Drawing
