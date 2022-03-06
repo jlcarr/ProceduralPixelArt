@@ -332,7 +332,7 @@ def rot_parametric(f,df,xsol,ysol, theta, mid_xy):
 	return f_rot,df_rot,xsol_rot,ysol_rot
 
 
-def add_frame(x, image_obj):
+def add_ontop_frame(x, image_obj):
 	"""Adds a cubic frame on top of a PIL Image object. Useful for debugging.
 	"""
 	draw_obj = ImageDraw.Draw(image_obj)
@@ -344,6 +344,40 @@ def add_frame(x, image_obj):
 	draw_obj.line([(2*x+2, 2*x+2), (2*x+2, 4*x+4)], fill=(0,0,0,255))
 	del draw_obj
 	return image_obj
+
+
+def add_frame(x, image_obj):
+	"""Adds a cubic frame (including back) to a PIL Image object. Useful for debugging.
+	"""
+	result = Image.new('RGBA',image_obj.size, color=(0,0,0,0))
+	draw_obj = ImageDraw.Draw(result)
+	
+	# Back
+	# Draw center edge
+	draw_obj.line([(2*x+2, 0), (2*x+2, 2*x+2)], fill=(0,0,0,255))
+	# Draw bottom edges
+	draw_obj.line([(0, 3*x+3), (2*x+2, 2*x+2), (4*x+4, 3*x+3)], fill=(0,0,0,255))
+	
+	result.paste(image_obj, (0,0), image_obj)
+	
+	# Ontop
+	# Draw outline
+	draw_obj.line([(0, x+1), (2*x+2, 0), (4*x+4, x+1), (4*x+4, 3*x+3), (2*x+1, 4*x+4), (0, 3*x+3), (0, x+1)], fill=(0,0,0,255))
+	# Draw upper from edges
+	draw_obj.line([(0, x+1), (2*x+1, 2*x+2), (4*x+4, x+1)], fill=(0,0,0,255))
+	# Draw front edge
+	draw_obj.line([(2*x+2, 2*x+2), (2*x+2, 4*x+4)], fill=(0,0,0,255))
+	
+	del draw_obj
+	return result
+
+
+def add_background(image_obj, color=(255,255,255,255)):
+	"""Adds a background color to images with transparencies
+	"""
+	result = Image.new('RGBA',image_obj.size,color=color)
+	result.paste(image_obj, (0,0), image_obj)
+	return result
 
 
 def create_cube(x):
@@ -408,14 +442,34 @@ def create_sphere(x):
 	return image_obj
 
 
+def create_cone(x):
+	"""Creates a cone standing vertically.
+
+	Size is bounded by the basic cube: Height is 2*x+2, diameter is same as height.
+	"""
+	img_h = 4 * x + 5
+	img_w = 4 * x + 5
+	image_obj = Image.new('RGBA', (img_w,img_h), color=(0,0,0,0))
+	draw_obj = ImageDraw.Draw(image_obj)
+	
+	x_orig = int((x+1) / np.sqrt(2))
+	bresenham_ellipse(image_obj, (2*x+2, 3*x+3), (2*x_orig+2, x_orig), 0, angle_min = np.pi)
+	draw_obj.line([(2*x+2 - 2*x_orig-2, 3*x+3), (2*x+2, x+1), (2*x+2 + 2*x_orig+2, 3*x+3)], fill=(0,0,0,255))
+	del draw_obj
+	ImageDraw.floodfill(image_obj,(2*x+2, 3*x+3), (255,255,255,255))
+	return image_obj
+
+
 
 
 if __name__ == "__main__":
 	x = 9
 	l = 2
 	create_cube(x).save("./images/test_cube.png")
+	create_cone(x).save("./images/test_cone.png")
+	add_background(add_frame(x, create_cone(x))).save("./images/test_cone_frame.png")
 	create_cylinder(x).save("./images/test_cylinder.png")
-	add_frame(x, create_cylinder(x)).save("./images/test_cylinder_frame.png")
+	add_background(add_frame(x, create_cylinder(x))).save("./images/test_cylinder_frame.png")
 	create_sphere(x).save("./images/test_sphere.png")
 	add_frame(x, create_sphere(x)).save("./images/test_sphere_frame.png")
 
@@ -428,6 +482,9 @@ if __name__ == "__main__":
 	img.save("./images/para_ellipse.png")
 
 	Ps = [(0,0),(2*size-2,size-1),(1-size,size-1),(size-1,0)]
+	Ps = [(0,size-1),(0,0),(size-1,size-1),(size-1,0)]
+	Ps = [(0,size-1),(0,1-size),(size-1,2*(size-1)),(size-1,0)]
+	Ps = [(0,size-1),(0,0),(size-1,0),(size-1,size-1)]
 
 	img = Image.new('RGBA', (size,size), color=(0,0,0,0))
 	f = lambda t: (10*t, 20*t+5)
@@ -448,4 +505,3 @@ if __name__ == "__main__":
 		bresenham_parametric(canvas, *para_set)
 		anim_frames.append(canvas)
 	anim_frames[0].save(fp='./images/rot.gif', format='GIF', append_images=anim_frames[1:], save_all=True, duration=200, loop=0)
-
