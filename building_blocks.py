@@ -40,27 +40,26 @@ def create_fillet(x):
 	image_obj = Image.new('RGBA',(img_w,img_h),color=(0,0,0,0))
 	draw_obj = ImageDraw.Draw(image_obj)
 	
-	x_orig = int((x+1) / np.sqrt(2))
-	#draw_obj.arc([(2*x+2 - 2*x_orig, 2*x+2 - x_orig), (2*x+2 + 2*x_orig, 2*x+2 + x_orig)], 0, 360) #fill=(0,0,0,255)
-	#image_obj = image_obj.rotate(int(np.degrees(np.arctan(3.0/2.0))), Image.NEAREST)
+	f,df,xsol,ysol = ellipse_parametric((img_w//2,img_h//2), (x+1, x+1), angle_min=np.pi)
+	f,df,xsol,ysol = shear_y_parametric(f,df,xsol,ysol, -1/2, img_w//2)
+	f,df,xsol,ysol = translate_parametric(f,df,xsol,ysol, (x+1,3*(1*x+1)//2))
+	bresenham_parametric(image_obj, f, df, xsol, ysol)
 	
-	#image_obj = np.array(image_obj)
-	#image_obj = np.roll(image_obj, x+1, axis=1)
-	#image_obj = np.roll(image_obj, (x+1)/2, axis=0)
-	#image_obj = Image.fromarray(image_obj)
-	
-	draw_obj = ImageDraw.Draw(image_obj)
-	draw_obj.line([(0, x+1), (2*x+2, 0), (4*x+4, x+1), (2*x+1, 2*x+2), (0, x+1)], fill=(0,0,0,255))
-	draw_obj.line([(0, x+1), (0, 3*x+3), (2*x+2, 4*x+4), (4*x+4, 3*x+3), (4*x+4, x+1)], fill=(0,0,0,255))
-	draw_obj.line([(2*x+2, 2*x+2), (2*x+2, 4*x+4)], fill=(0,0,0,255))
-	
-	draw_obj.line([(2*x+2, 4*x+4), (2*x+2 + 4*x*np.cos(np.arctan((3.0*x+2)/(2*x+2))), 4*x+4 - 4*x*np.sin(np.arctan((3.0*x+2)/(2*x+2))))], fill=(0,0,0,255))
-	del draw_obj
-	
-	bresenham_ellipse(image_obj, (2*x+2, x+1), (2*x_orig+2, x_orig), 0)#angle_min = np.pi # -45*3.14159/180.0
-	bresenham_ellipse(image_obj, (x+1, (5*x+5)/2), (x*1.5, x*0.5), 0, ABCD=(1.25, -1, 1, -(x+1)*(x+1)))
-	bresenham_ellipse(image_obj, (3*x+3, (5*x+5)/2), (x*1.5, x*0.5), 0, ABCD=(1.25, 1, 1, -(x+1)*(x+1)))
+	draw_obj.line([(3*x+3, (4*x+4)*5//8), (4*x+4, 3*x+3)], fill=(0,0,0,255))
+	#draw_obj.line([(2*x+2, 2*x+2), (2*x+2, 4*x+4), (0, 3*x+3), (0, x+1), (2*x+2, 0), (4*x+4, x+1), (2*x+2, 2*x+2)], fill=(0,0,0,255))
 
+	# Draw outline
+	draw_obj.line([(0, x+1), (2*x+2, 0), (4*x+4, x+1), (4*x+4, 3*x+3)], fill=(0,0,0,255))
+	draw_obj.line([(2*x+1, 4*x+4), (0, 3*x+3), (0, x+1)], fill=(0,0,0,255))
+	# Draw upper from edges
+	draw_obj.line([(0, x+1), (2*x+1, 2*x+2), (4*x+4, x+1)], fill=(0,0,0,255))
+	# Draw front edge
+	draw_obj.line([(2*x+2, 2*x+2), (2*x+2, 4*x+4)], fill=(0,0,0,255))
+
+
+	#image_obj = add_ontop_frame(x, image_obj)
+
+	del draw_obj
 	return image_obj
 
 
@@ -457,11 +456,12 @@ def rust(image_obj, iters=2, prob=9, clean=True):
 
 
 if __name__ == "__main__":
-	#create_fillet(32).save("test_fillet.png")
 	x = 9
 	l = 2
 	w_sep = 10
 	h_sep = 5
+	
+	add_background(create_fillet(x)).save("./images/test_test_fillet.png")
 	
 	create_brick_cube(x, w_sep, h_sep).save("./images/brick_cube.png")
 	create_brick_cylinder(x, w_sep, h_sep).save("./images/brick_cylinder.png")
@@ -470,19 +470,19 @@ if __name__ == "__main__":
 	create_staircase_platform(x, l, fb=1,lr=1).save("./images/test_staircase_platform.png")
 	create_platform(x, l).save("./images/test_platform.png")
 	
-	create_staircase(x, l, fb=1,lr=1).save("./images/staircase_rb_sprite.png")
-	create_staircase(x, l, fb=-1,lr=1).save("./images/staircase_rf_sprite.png")
-	create_staircase(x, l, fb=1,lr=-1).save("./images/staircase_lb_sprite.png")
+	create_staircase(x, l, fb= 1,lr= 1).save("./images/staircase_rb_sprite.png")
+	create_staircase(x, l, fb=-1,lr= 1).save("./images/staircase_rf_sprite.png")
+	create_staircase(x, l, fb= 1,lr=-1).save("./images/staircase_lb_sprite.png")
 	create_staircase(x, l, fb=-1,lr=-1).save("./images/staircase_lf_sprite.png")
 
-	create_staircase_platform(x, l, fb=1,lr=1).save("./images/staircase_platform_rb_sprite.png")
-	create_staircase_platform(x, l, fb=-1,lr=1).save("./images/staircase_platform_rf_sprite.png")
-	create_staircase_platform(x, l, fb=1,lr=-1).save("./images/staircase_platform_lb_sprite.png")
+	create_staircase_platform(x, l, fb= 1,lr= 1).save("./images/staircase_platform_rb_sprite.png")
+	create_staircase_platform(x, l, fb=-1,lr= 1).save("./images/staircase_platform_rf_sprite.png")
+	create_staircase_platform(x, l, fb= 1,lr=-1).save("./images/staircase_platform_lb_sprite.png")
 	create_staircase_platform(x, l, fb=-1,lr=-1).save("./images/staircase_platform_lf_sprite.png")
 
-	create_staircase_thin(x, l, fb=1,lr=1).save("./images/staircase_thin_rb_sprite.png")
-	create_staircase_thin(x, l, fb=-1,lr=1).save("./images/staircase_thin_rf_sprite.png")
-	create_staircase_thin(x, l, fb=1,lr=-1).save("./images/staircase_thin_lb_sprite.png")
+	create_staircase_thin(x, l, fb= 1,lr= 1).save("./images/staircase_thin_rb_sprite.png")
+	create_staircase_thin(x, l, fb=-1,lr= 1).save("./images/staircase_thin_rf_sprite.png")
+	create_staircase_thin(x, l, fb= 1,lr=-1).save("./images/staircase_thin_lb_sprite.png")
 	create_staircase_thin(x, l, fb=-1,lr=-1).save("./images/staircase_thin_lf_sprite.png")
 
 	x = 19
@@ -492,7 +492,7 @@ if __name__ == "__main__":
 	rust(create_brick_cube(x, w_sep, h_sep)).save("./images/rusted_brick_cube.png")
 	rust(create_brick_cylinder(x, w_sep, h_sep)).save("./images/rusted_brick_cylinder.png")
 	rust(create_brick_cube(x, w_sep, h_sep)).save("./images/rusted_brick_cube.png")
-	rust(create_staircase(x, l, fb=1,lr=1)).save("./images/rusted_staircase_rb_sprite.png")
-	rust(create_staircase(x, l, fb=-1,lr=1)).save("./images/rusted_staircase_rf_sprite.png")
-	rust(create_staircase(x, l, fb=1,lr=-1)).save("./images/rusted_staircase_lb_sprite.png")
+	rust(create_staircase(x, l, fb= 1,lr= 1)).save("./images/rusted_staircase_rb_sprite.png")
+	rust(create_staircase(x, l, fb=-1,lr= 1)).save("./images/rusted_staircase_rf_sprite.png")
+	rust(create_staircase(x, l, fb= 1,lr=-1)).save("./images/rusted_staircase_lb_sprite.png")
 	rust(create_staircase(x, l, fb=-1,lr=-1)).save("./images/rusted_staircase_lf_sprite.png")

@@ -213,6 +213,13 @@ def bresenham_ellipse(image_obj, mid_xy, ab, theta, angle_max = 2*np.pi, angle_m
 
 
 def bresenham_parametric(image_obj, f, df, xsol, ysol, color=(0,0,0,255)):
+	"""Draws a parametrically defined 2D curve
+	given:
+	- f(t): The evaluation of the parametric function at a given t, giving coordinates x,y
+	- df(t): The evaluation of the derivative with respect to t at a given t, giving the velocity dx,dy
+	- xsol(x,t): The inverse of the function for the x-coordinates, given an x will find a solution t closest to the given t
+	- ysol(y,t): The inverse of the function for the y-coordinates, given an y will find a solution t closest to the given t
+	"""
 	draw_obj = ImageDraw.Draw(image_obj)
 
 	t = 0
@@ -330,6 +337,27 @@ def rot_parametric(f,df,xsol,ysol, theta, mid_xy):
 			t = xsol(x_unrot,t)
 		return t
 	return f_rot,df_rot,xsol_rot,ysol_rot
+
+
+def shear_y_parametric(f,df,xsol,ysol, sy, mid_x):
+	f_sy = lambda t: (f(t)[0], sy*(f(t)[0]-mid_x) + f(t)[1])
+	df_sy = lambda t: (df(t)[0], sy*df(t)[0] + df(t)[1]) # commutativity
+	xsol_sy = xsol
+	def ysol_sy(y,t):
+		xp,yp = f_sy(t)
+		dxp,dyp = df_sy(t)
+		x = xp + (y-yp)*dxp/dyp
+		y_unsheared = y - sy*(x-mid_x)
+		return ysol(y_unsheared,t)
+	return f_sy,df_sy,xsol_sy,ysol_sy
+
+
+def translate_parametric(f,df,xsol,ysol, translation):
+	f_trans = lambda t: tuple(np.array(f(t)) + np.array(translation))
+	df_trans = df
+	xsol_trans = lambda x,t: xsol(x-translation[0],t)
+	ysol_trans = lambda y,t: ysol(y-translation[1],t)
+	return f_trans,df_trans,xsol_trans,ysol_trans
 
 
 def add_ontop_frame(x, image_obj):
