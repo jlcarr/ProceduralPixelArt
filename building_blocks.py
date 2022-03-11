@@ -34,7 +34,7 @@ def create_platform(x,l):
 
 
 
-def create_fillet(x, lr=1):
+def create_fillet_small(x, lr=1):
 	img_h = 4 * x + 5
 	img_w = 4 * x + 5
 	image_obj = Image.new('RGBA',(img_w,img_h),color=(0,0,0,0))
@@ -42,7 +42,7 @@ def create_fillet(x, lr=1):
 	
 	f,df,xsol,ysol = ellipse_parametric((img_w//2,img_h//2), (x+1, x+1), angle_min=np.pi)
 	f,df,xsol,ysol = shear_y_parametric(f,df,xsol,ysol, -1/2*lr, img_w//2)
-	f,df,xsol,ysol = translate_parametric(f,df,xsol,ysol, (lr*(x+1), 3*(1*x+1)//2))
+	f,df,xsol,ysol = translate_parametric(f,df,xsol,ysol, (lr*(x+1), 3*(x+1)//2))
 	bresenham_parametric(image_obj, f, df, xsol, ysol)
 	
 	draw_obj.line([((2+lr)*(x+1), (4*x+4)*5//8), ((1+lr)*(2*x+2), 3*x+3)][::lr], fill=(0,0,0,255))
@@ -55,6 +55,30 @@ def create_fillet(x, lr=1):
 	# Draw front edge
 	draw_obj.line([(2*x+2, 2*x+2), (2*x+2, 4*x+4)], fill=(0,0,0,255))
 
+	del draw_obj
+	return image_obj
+
+
+
+
+def create_fillet(x, lr=-1):
+	img_h = 4 * x + 5
+	img_w = 4 * x + 5
+	image_obj = Image.new('RGBA',(img_w,img_h),color=(0,0,0,0))
+	draw_obj = ImageDraw.Draw(image_obj)
+	
+	f,df,xsol,ysol = ellipse_parametric((img_w//2,img_h//2), (2*x+2, 2*x+2), angle_min=np.pi + (lr+1)*np.pi/4, angle_max=2*np.pi + (lr-1)*np.pi/4)
+	f,df,xsol,ysol = shear_y_parametric(f,df,xsol,ysol, -1/2*lr, img_w//2)
+	f,df,xsol,ysol = translate_parametric(f,df,xsol,ysol, (0, 2*x+2))
+	bresenham_parametric(image_obj, f, df, xsol, ysol)
+	
+	draw_obj.line([(2*x+2, 2*x+2), ((1+lr)*(2*x+2), 3*x+3), ((1+lr)*(2*x+2), x+1)][::lr], fill=(0,0,0,255))
+	
+	# Draw outline
+	draw_obj.line([(0, x+1), (2*x+2, 0), (4*x+4, x+1)], fill=(0,0,0,255))
+	# Draw upper from edges
+	draw_obj.line([(0, x+1), (2*x+1, 2*x+2), (4*x+4, x+1)], fill=(0,0,0,255))
+	
 	del draw_obj
 	return image_obj
 
