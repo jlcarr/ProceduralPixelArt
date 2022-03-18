@@ -52,8 +52,13 @@ def create_fillet_small(x, lr=1):
 	draw_obj.line([((1-lr)*(2*x+2), 3*x+3), (2*x+2, 4*x+4)][::lr], fill=(0,0,0,255))
 	# Draw upper from edges
 	draw_obj.line([(0, x+1), (2*x+1, 2*x+2), (4*x+4, x+1)], fill=(0,0,0,255))
+	
+	ImageDraw.floodfill(image_obj,(2*x+2, 3*x+3), (255,255,255,255))
+	
 	# Draw front edge
 	draw_obj.line([(2*x+2, 2*x+2), (2*x+2, 4*x+4)], fill=(0,0,0,255))
+
+	ImageDraw.floodfill(image_obj,(2*x+2, x+1), (255,255,255,255))
 
 	del draw_obj
 	return image_obj
@@ -61,7 +66,7 @@ def create_fillet_small(x, lr=1):
 
 
 
-def create_fillet(x, lr=1, fb=1):
+def create_fillet(x, lr=-1, fb=1):
 	img_h = 4 * x + 5
 	img_w = 4 * x + 5
 	image_obj = Image.new('RGBA',(img_w,img_h),color=(0,0,0,0))
@@ -82,6 +87,8 @@ def create_fillet(x, lr=1, fb=1):
 	draw_obj.line([(0, x+1), (2*x+2, 0), (4*x+4, x+1)], fill=(0,0,0,255))
 	# Draw upper from edges
 	draw_obj.line([(0, x+1), (2*x+1, 2*x+2), (4*x+4, x+1)], fill=(0,0,0,255))
+	
+	#ImageDraw.floodfill(image_obj,(2*x+2, x+1), (255,255,255,255))
 	
 	del draw_obj
 	return image_obj
@@ -159,6 +166,7 @@ def create_staircase(x, l, lr=1, fb=1):
 		draw_obj.line([(x_front + fb*lr*2*l*i, y_front - l*((2+fb)*i+2)), (x_front + fb*lr*2*l*i, y_front - (2+fb)*l*i)], fill=(0,0,0,255))
 	# Front, final step
 	draw_obj.line([(x_front + fb*lr*2*l*(i_final+1), y_front - (2+fb)*l*(i_final+1)), (x_front + fb*lr*2*l*(i_final+1), (3-fb)*(x+1)/2 + fb*remainder), ((2+lr+lr*fb)*(x+1), (3-fb)*(x+1)/2)][::fb*lr], fill=(0,0,0,255))
+
 
 	del draw_obj
 	return image_obj
@@ -485,6 +493,7 @@ if __name__ == "__main__":
 	w_sep = 10
 	h_sep = 5
 	
+	create_fillet(x).save("./images/test_fillet.png")
 	add_background(create_fillet(x)).save("./images/test_test_fillet.png")
 	
 	create_brick_cube(x, w_sep, h_sep).save("./images/brick_cube.png")

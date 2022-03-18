@@ -182,3 +182,18 @@ if __name__ == "__main__":
 	])
 	tile3D(hollow_pattern, tiles, x).save("./images/hollow.png")
 
+
+	# Bridge
+	tiles = [
+		None,
+		create_cube(x),
+		create_fillet_small(x, lr=1),
+		create_fillet_small(x, lr=-1),
+	]
+	hollow_pattern = np.array([
+		[
+			[1, 3, 1]
+		]
+	])
+	tile3D(hollow_pattern, tiles, x).save("./images/bridge.png")
+
