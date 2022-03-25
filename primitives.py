@@ -408,6 +408,20 @@ def add_background(image_obj, color=(255,255,255,255)):
 	return result
 
 
+def color_inside(image_obj, color=(255,255,255,255)):
+	"""Adds a background color to the transparent interior of an outlined image
+	"""
+	result = Image.new('RGBA',image_obj.size,color=color)
+	result.paste(image_obj, (0,0), image_obj)
+	
+	ImageDraw.floodfill(result,(0,0), (0,0,0,0))
+	ImageDraw.floodfill(result,(0,result.size[1]-1), (0,0,0,0))
+	ImageDraw.floodfill(result,(result.size[0]-1,0), (0,0,0,0))
+	ImageDraw.floodfill(result,(result.size[0]-1,result.size[1]-1), (0,0,0,0))
+	
+	return result
+
+
 def create_cube(x):
 	"""Creates a basic cube.
 

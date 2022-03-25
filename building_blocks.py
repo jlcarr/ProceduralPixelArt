@@ -53,12 +53,10 @@ def create_fillet_small(x, lr=1):
 	# Draw upper from edges
 	draw_obj.line([(0, x+1), (2*x+1, 2*x+2), (4*x+4, x+1)], fill=(0,0,0,255))
 	
-	ImageDraw.floodfill(image_obj,(2*x+2, 3*x+3), (255,255,255,255))
-	
 	# Draw front edge
 	draw_obj.line([(2*x+2, 2*x+2), (2*x+2, 4*x+4)], fill=(0,0,0,255))
 
-	ImageDraw.floodfill(image_obj,(2*x+2, x+1), (255,255,255,255))
+	image_obj = color_inside(image_obj)
 
 	del draw_obj
 	return image_obj
@@ -88,7 +86,7 @@ def create_fillet(x, lr=-1, fb=1):
 	# Draw upper from edges
 	draw_obj.line([(0, x+1), (2*x+1, 2*x+2), (4*x+4, x+1)], fill=(0,0,0,255))
 	
-	#ImageDraw.floodfill(image_obj,(2*x+2, x+1), (255,255,255,255))
+	image_obj = color_inside(image_obj)
 	
 	del draw_obj
 	return image_obj
@@ -493,8 +491,8 @@ if __name__ == "__main__":
 	w_sep = 10
 	h_sep = 5
 	
-	create_fillet(x).save("./images/test_fillet.png")
-	add_background(create_fillet(x)).save("./images/test_test_fillet.png")
+	create_fillet_small(x).save("./images/test_fillet_small.png")
+	create_fillet(x, fb=-1).save("./images/test_fillet.png")
 	
 	create_brick_cube(x, w_sep, h_sep).save("./images/brick_cube.png")
 	create_brick_cylinder(x, w_sep, h_sep).save("./images/brick_cylinder.png")
