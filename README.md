@@ -22,7 +22,15 @@ Which makes logical sense.
 - Project a point from clipspace to screenspace `project_to_pixel`
 - Lines (use PIL's `ImageDraw.line`)
 - Ellipses and elliptical arcs (`brensenham_ellipse`)
+- Parametrically defined curves `bresenham_parametric`
+	- ellipses
+	- Bezier curves
+	- rotations of curves
+	- shearing of curves
+	- translation of curves
 - Draw on a cube frame (useful for propotioning) `add_frame`
+- Adding background color
+- Adding color to inside of drawing
 - Cube `create_cube`
 - Cylinder `create_cylinder`
 - Sphere `create_sphere`
@@ -31,6 +39,7 @@ Which makes logical sense.
 - Brick Cylinder
 - Platform
 - Stairs
+- Fillet (small + large)
 - Rust
 #### Person
 - Draw a still or walking animated stick person `create_stick`
