@@ -64,7 +64,7 @@ def create_fillet_small(x, lr=1):
 
 
 
-def create_fillet(x, lr=-1, fb=1):
+def create_fillet(x, lr=1, fb=1):
 	img_h = 4 * x + 5
 	img_w = 4 * x + 5
 	image_obj = Image.new('RGBA',(img_w,img_h),color=(0,0,0,0))
@@ -492,7 +492,7 @@ if __name__ == "__main__":
 	h_sep = 5
 	
 	create_fillet_small(x).save("./images/test_fillet_small.png")
-	create_fillet(x, fb=-1).save("./images/test_fillet.png")
+	create_fillet(x).save("./images/test_fillet.png")
 	
 	create_brick_cube(x, w_sep, h_sep).save("./images/brick_cube.png")
 	create_brick_cylinder(x, w_sep, h_sep).save("./images/brick_cylinder.png")
